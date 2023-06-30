@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function RecipientPage(props) {
+export default function RecipientPage() {
     return (
       <p className={"RecipientPage"}>
         {"RecipientPage"}
