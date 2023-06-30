@@ -1,0 +1,27 @@
+.menu {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+  
+  .nav {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .nav a {
+    text-decoration: none;
+    color: #000;
+    font-weight: bold;
+    margin-bottom: 40px;
+    font-size: 16px;
+  }
+
+  .nav a:hover {
+    background-color: #f2f2f2;
+  }
