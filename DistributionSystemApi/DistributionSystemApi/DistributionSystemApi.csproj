@@ -6,12 +6,4 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
-  <ItemGroup>
-    <EditorConfigFiles Remove="C:\Utility\content-distribution-system\content-distribution-system\DistributionSystemApi\DistributionSystemApi\.editorconfig" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="C:\Utility\content-distribution-system\content-distribution-system\DistributionSystemApi\DistributionSystemApi\.editorconfig" />
-  </ItemGroup>
-
 </Project>
