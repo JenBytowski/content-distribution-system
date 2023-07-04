@@ -14,5 +14,7 @@
 
         public List<string> Attachments { get; set; } = new List<string>();
 
+        public List<AttachmentData> BinaryAttachments { get; set; } = new List<AttachmentData>();
+
     }
 }
