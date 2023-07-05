@@ -5,7 +5,7 @@ VisualStudioVersion = 17.4.33205.214
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DistributionSystemApi", "DistributionSystemApi\DistributionSystemApi.csproj", "{83B765B5-7BDF-4E55-8F7E-ADD1397006FA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MailLibrary", "MailLibrary\MailLibrary.csproj", "{0722BF26-BB38-497C-8114-6ED7F4E6A4EF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DistributionSystemApi.MailLibrary", "MailLibrary\DistributionSystemApi.MailLibrary.csproj", "{0722BF26-BB38-497C-8114-6ED7F4E6A4EF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -1,81 +1,84 @@
 ﻿using System.Net.Mail;
 using System.ComponentModel.DataAnnotations;
+using DistributionSystemApi.MailLibrary;
 
 namespace MailLibrary
 {
-    public class SMTPMailService
+    public class SMTPMailService : IMailService<MailModel>
     {
-        private const string InvalidEmailsRecipientCountExceptionMessage = "Must have at least one recipient";
+        private const string InvalidSMTPClientConfExceptionMessage = "Check configuration parameters";
 
-        private const string InvalidEmailsSenderExceptionMessage = "Must have sender";
-
-        private const string InvalidEmailsFormatExceptionMessage = "Check mails format";
-
-        private const string InvalidEmailsSendExceptionMessage = "An error occurred while sending the email: ";
+        private const string InvalidEmailsCountExceptionMessage = "Check mails count";
 
         private readonly SmtpClient _smptClient;
+        private readonly IMailValidationService _mailValidationService;
 
-        public SMTPMailService(SmtpClient smtpClient)
+        public SMTPMailService(SmtpClient smtpClient, IMailValidationService mailValidationService)
         {
             _smptClient = smtpClient ?? throw new ArgumentNullException(nameof(smtpClient));
+
+            _mailValidationService = mailValidationService ?? throw new ArgumentNullException(nameof(mailValidationService));
         }
 
         public async Task SendEmailAsync(MailModel mail, CancellationToken cancellationToken)
         {
-            ValidateMailAndThrowError(mail);
+            _mailValidationService.ValidateMailAndThrowError(mail);
 
             try
             {
                 using (MailMessage mailMessage = new MailMessage())
                 {
-                    mailMessage.Subject = mail.Subject;
-                    mailMessage.Body = mail.Body;
-                    mailMessage.From = new MailAddress(mail.From);
-
-                    foreach (string recipient in mail.To)
-                    {
-                        mailMessage.To.Add(new MailAddress(recipient));
-                    }
-
-                    foreach (string replyToAddress in mail.ReplyTo)
-                    {
-                        mailMessage.ReplyToList.Add(new MailAddress(replyToAddress));
-                    }
-
-                    foreach (var attachmentPath in mail.Attachments)
-                    {
-                        mailMessage.Attachments.Add(new Attachment(attachmentPath));
-                    }
-
-                    foreach (AttachmentData attachment in mail.BinaryAttachments)
-                    {
-                        MemoryStream stream = new MemoryStream(attachment.Data);
-                        Attachment binaryAttachment = new Attachment(stream, attachment.FileName);
-                        mailMessage.Attachments.Add(binaryAttachment);
-                    }
+                    Map(mail, mailMessage);
 
                     await _smptClient.SendMailAsync(mailMessage, cancellationToken);
                 }
             }
-            catch (Exception ex)
+            catch (InvalidOperationException ex)
             {
-                throw new ArgumentException(InvalidEmailsSendExceptionMessage + ex.Message, ex);
+                throw new InvalidOperationException(InvalidSMTPClientConfExceptionMessage, ex);
             }
         }
 
-        public void ValidateMailAndThrowError(MailModel mail)
+        public async Task SendEmailsAsync(IEnumerable<MailModel> mails, CancellationToken cancellationToken)
         {
-            if (mail.To.Count == 0)
+            if(mails == null)
             {
-                throw new ArgumentException(InvalidEmailsRecipientCountExceptionMessage);
+                throw new ArgumentException(InvalidEmailsCountExceptionMessage);
             }
-            if (mail.From == null)
+
+            foreach (var mail in mails)
             {
-                throw new ArgumentException(InvalidEmailsSenderExceptionMessage);
+                await SendEmailAsync(mail, cancellationToken);
             }
-            if (!new EmailAddressAttribute().IsValid(mail.From) && mail.To.All(address => !new EmailAddressAttribute().IsValid(address)))
+        }
+
+        private void Map(MailModel mail, MailMessage mailMessage)
+        {
+
+            mailMessage.Subject = mail.Subject;
+            mailMessage.Body = mail.Body;
+            mailMessage.From = new MailAddress(mail.From);
+
+            foreach (string recipient in mail.To)
             {
-                throw new ArgumentException(InvalidEmailsFormatExceptionMessage);
+                mailMessage.To.Add(new MailAddress(recipient));
+            }
+
+            foreach (string replyToAddress in mail.ReplyTo)
+            {
+                mailMessage.ReplyToList.Add(new MailAddress(replyToAddress));
+            }
+
+            foreach (var attachmentPath in mail.Attachments)
+            {
+                mailMessage.Attachments.Add(new Attachment(attachmentPath));
+            }
+
+            foreach (AttachmentData attachment in mail.BinaryAttachments)
+            {
+                MemoryStream stream = new MemoryStream(attachment.Data);
+                Attachment binaryAttachment = new Attachment(stream, attachment.FileName);
+                mailMessage.Attachments.Add(binaryAttachment);
             }
         }
     }
