@@ -1,4 +1,4 @@
-﻿namespace MailLibrary
+﻿namespace DistributionSystemApi.MailLibrary.Models
 {
     public class MailModel
     {

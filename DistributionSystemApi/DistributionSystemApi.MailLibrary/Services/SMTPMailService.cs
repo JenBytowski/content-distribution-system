@@ -1,15 +1,14 @@
 ﻿using System.Net.Mail;
 using System.ComponentModel.DataAnnotations;
-using DistributionSystemApi.MailLibrary;
+using DistributionSystemApi.MailLibrary.Models;
+using DistributionSystemApi.MailLibrary.Interfaces;
 
-namespace MailLibrary
+namespace DistributionSystemApi.MailLibrary.Services
 {
-    public class SMTPMailService : IMailService<MailModel>
+    public class SMTPMailService : IMailService
     {
         private const string InvalidSMTPClientConfExceptionMessage = "Check configuration parameters";
-
         private const string InvalidEmailsCountExceptionMessage = "Check mails count";
-
         private readonly SmtpClient _smptClient;
         private readonly IMailValidationService _mailValidationService;
 
@@ -24,24 +23,25 @@ namespace MailLibrary
         {
             _mailValidationService.ValidateMailAndThrowError(mail);
 
+            var mailMessage = CreateMailMessage(mail);
+
             try
             {
-                using (MailMessage mailMessage = new MailMessage())
-                {
-                    Map(mail, mailMessage);
-
-                    await _smptClient.SendMailAsync(mailMessage, cancellationToken);
-                }
+                await _smptClient.SendMailAsync(mailMessage, cancellationToken);
             }
             catch (InvalidOperationException ex)
             {
                 throw new InvalidOperationException(InvalidSMTPClientConfExceptionMessage, ex);
             }
+            finally
+            {
+                mailMessage.Dispose();
+            }
         }
 
         public async Task SendEmailsAsync(IEnumerable<MailModel> mails, CancellationToken cancellationToken)
         {
-            if(mails == null)
+            if (mails == null)
             {
                 throw new ArgumentException(InvalidEmailsCountExceptionMessage);
             }
@@ -52,8 +52,9 @@ namespace MailLibrary
             }
         }
 
-        private void Map(MailModel mail, MailMessage mailMessage)
+        private MailMessage CreateMailMessage(MailModel mail)
         {
+            var mailMessage = new MailMessage();
 
             mailMessage.Subject = mail.Subject;
             mailMessage.Body = mail.Body;
@@ -80,6 +81,8 @@ namespace MailLibrary
                 Attachment binaryAttachment = new Attachment(stream, attachment.FileName);
                 mailMessage.Attachments.Add(binaryAttachment);
             }
+
+            return mailMessage;
         }
     }
 }
