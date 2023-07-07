@@ -1,5 +1,4 @@
 ﻿using System.Net.Mail;
-using System.ComponentModel.DataAnnotations;
 using DistributionSystemApi.MailLibrary.Models;
 using DistributionSystemApi.MailLibrary.Interfaces;
 
@@ -35,7 +34,7 @@ namespace DistributionSystemApi.MailLibrary.Services
             }
             finally
             {
-                mailMessage.Dispose();
+                mailMessage?.Dispose();
             }
         }
 
@@ -58,16 +57,16 @@ namespace DistributionSystemApi.MailLibrary.Services
 
             mailMessage.Subject = mail.Subject;
             mailMessage.Body = mail.Body;
-            mailMessage.From = new MailAddress(mail.From);
+            mailMessage.From = new MailAddress(mail.From.Address);
 
-            foreach (string recipient in mail.To)
+            foreach (var recipient in mail.To)
             {
-                mailMessage.To.Add(new MailAddress(recipient));
+                mailMessage.To.Add(new MailAddress(recipient.Address));
             }
 
-            foreach (string replyToAddress in mail.ReplyTo)
+            foreach (var replyToAddress in mail.ReplyTo)
             {
-                mailMessage.ReplyToList.Add(new MailAddress(replyToAddress));
+                mailMessage.ReplyToList.Add(new MailAddress(replyToAddress.Address));
             }
 
             foreach (var attachmentPath in mail.Attachments)

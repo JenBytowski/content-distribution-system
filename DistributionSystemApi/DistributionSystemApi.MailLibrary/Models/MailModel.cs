@@ -6,11 +6,11 @@
 
         public string Body { get; set; }
 
-        public string From { get; set; }
+        public EmailModel From { get; set; }
 
-        public List<string> To { get; set; } = new List<string>();
+        public List<EmailModel> To { get; set; } = new List<EmailModel>();
 
-        public List<string> ReplyTo { get; set; } = new List<string>();
+        public List<EmailModel> ReplyTo { get; set; } = new List<EmailModel>();
 
         public List<string> Attachments { get; set; } = new List<string>();
 

@@ -5,10 +5,10 @@ using DistributionSystemApi.MailLibrary;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddMailServices(builder.Configuration);
+
 // Add services to the container.
 builder.Services.AddRazorPages();
-
-builder.Services.AddMailServices();
 
 var app = builder.Build();
 

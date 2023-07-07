@@ -1,81 +1,74 @@
-﻿using System.Net.Mail;
-using System.Net;
+﻿using DistributionSystemApi.MailLibrary.Models;
+using Microsoft.VisualStudio.TestPlatform.Utilities;
+using System.Diagnostics;
 using Xunit;
-using DistributionSystemApi.MailLibrary.Models;
-using DistributionSystemApi.MailLibrary.Services;
+using Xunit.Abstractions;
 
 namespace DistributionSystemApi.Tests
 {
-    public class MailLibraryTest
+    public class MailLibraryTest : IClassFixture<SMTPMailServiceFixture>
     {
-        [Fact]
-        public async Task TestSend()
+        private readonly SMTPMailServiceFixture _fixture;
+
+        public MailLibraryTest(SMTPMailServiceFixture fixture)
         {
-            // Arrange
-            var mail = new MailModel
-            {
-                Subject = "Test",
-                Body = "text",
-                From = "v9287808@gmail.com",
-                To = new List<string> { "vadim600000@gmail.com" },
-            };
-
-            var smtpClient = new SmtpClient("smtp.gmail.com", 587)
-            {
-                EnableSsl = true,
-                Credentials = new NetworkCredential("v9287808@gmail.com", "jqnkvtsijygpkquy")
-            };
-
-            var mailValidationService = new MailValidationService();
-            var mailService = new SMTPMailService(smtpClient, mailValidationService);
-
-            // Act
-            try
-            {
-                await mailService.SendEmailAsync(mail, CancellationToken.None);
-                // Assert
-                Assert.True(true);
-            }
-            catch
-            {
-                Assert.False(false);
-            }
+            _fixture = fixture;
         }
 
         [Fact]
-        public async Task TestSendWithAttachment()
+        public async Task SendMailAsync_MailIsValid_SendsMail()
         {
-            // Arrange
-            var mail = new MailModel
-            {
-                Subject = "Test",
-                Body = "text",
-                From = "v9287808@gmail.com",
-                To = new List<string> { "vadim600000@gmail.com" },
-                Attachments = new List<string> { "D:\\test.txt" },
-            };
+            var mail = _fixture.GetValidMail();
 
-            var smtpClient = new SmtpClient("smtp.gmail.com", 587)
-            {
-                EnableSsl = true,
-                Credentials = new NetworkCredential("v9287808@gmail.com", "jqnkvtsijygpkquy")
-            };
+            await _fixture.MailService.SendEmailAsync(mail, CancellationToken.None);
 
-            var mailValidationService = new MailValidationService();
-            var mailService = new SMTPMailService(smtpClient, mailValidationService);
+            Assert.True(_fixture.GetAmountOfSentEmails() == 1);
 
-            // Act
-            try
-            {
-                await mailService.SendEmailAsync(mail, CancellationToken.None);
-                // Assert
-                Assert.True(true);
-            }
-            catch
-            {
-                Assert.False(false);
-            }
+            _fixture.RemoveTestMails();
         }
+
+        [Fact]
+        public async Task SendMailAsync_MailIsInvalid_ThrowsException()
+        {
+            var mail = _fixture.GetValidMail();
+            mail.From = null;
+
+            await Assert.ThrowsAsync<ArgumentException>(
+                () => _fixture.MailService.SendEmailAsync(mail, CancellationToken.None));
+            Assert.True(_fixture.GetAmountOfSentEmails() == 0);
+        }
+
+        [Fact]
+        public async Task SendMailsAsync_AllMailsAreValid_SendsMails()
+        {
+            var mails = new List<MailModel>
+            {
+                _fixture.GetValidMail(),
+                _fixture.GetValidMail()
+            };
+
+            await _fixture.MailService.SendEmailsAsync(mails, CancellationToken.None);
+
+            Assert.True(_fixture.GetAmountOfSentEmails() == mails.Count);
+
+            _fixture.RemoveTestMails();
+        }
+
+        [Fact]
+        public async Task SendMailsAsync_AllMailsAreInvalid_ThrowsException()
+        {
+            var mail = _fixture.GetValidMail();
+            mail.From = null;
+
+            var mails = new List<MailModel>
+            {
+                mail
+            };
+
+            await Assert.ThrowsAsync<ArgumentException>(
+                () => _fixture.MailService.SendEmailsAsync(mails, CancellationToken.None));
+            Assert.True(_fixture.GetAmountOfSentEmails() == 0);
+        }
+
     }
-
 }
