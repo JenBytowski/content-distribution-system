@@ -17,7 +17,7 @@
   </ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\DistributionSystemApi.Services.Entities\DistributionSystemApi.Services.Entities.csproj" />
+		<ProjectReference Include="..\DistributionSystemApi.Data.Entities\DistributionSystemApi.Data.Entities.csproj" />
 	</ItemGroup>
 
 </Project>

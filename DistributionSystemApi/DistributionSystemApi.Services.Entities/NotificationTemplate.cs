@@ -1,12 +1,10 @@
-﻿using System.Collections.Generic;
+﻿namespace DistributionSystemApi.Data.Entities;
 
-namespace DistributionSystemApi.Services.Entities;
-
-public partial class NotificationTemplate
+public class NotificationTemplate
 {
-    public string Id { get; set; } = null!;
+    public Guid Id { get; set; };
 
-    public string Description { get; set; } = null!;
+    public string Description { get; set; };
 
     public virtual ICollection<Notification> Notifications { get; set; } = new List<Notification>();
 }
