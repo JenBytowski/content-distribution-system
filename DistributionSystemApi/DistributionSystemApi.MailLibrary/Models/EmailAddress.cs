@@ -3,11 +3,11 @@ using System.Net.Mail;
 
 namespace DistributionSystemApi.MailLibrary.Models
 {
-    public class EmailModel
+    public class EmailAddress
     {
         public string Address { get; set; }
 
-        public EmailModel(string address)
+        public EmailAddress(string address)
         {
             if (!IsValidAddress(address))
                 throw new ArgumentException("Invalid email format ", nameof(address));

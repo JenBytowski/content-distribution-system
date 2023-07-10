@@ -9,11 +9,10 @@ namespace DistributionSystemApi.MailLibrary.Services
     {
         private const string InvalidEmailsRecipientCountExceptionMessage = "Must have at least one recipient";
         private const string InvalidEmailsSenderExceptionMessage = "Must have sender";
-        private const string InvalidEmailsFormatExceptionMessage = "Check mails format";
         private const string InvalidAttachmentsPathExceptionMessage = "Attachment file not found: ";
         private const string InvalidLackOfDataExceptionMessage = "Data not found in file: ";
 
-        public void ValidateMailAndThrowError(MailModel mail)
+        public void ValidateMail(MailModel mail)
         {
             if (mail.To.Count == 0)
             {

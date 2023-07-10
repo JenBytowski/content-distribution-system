@@ -24,8 +24,8 @@ namespace DistributionSystemApi.Tests
         {
             return new MailModel
             {
-                From = new EmailModel(From),
-                To = Emails.Select(email => new EmailModel(email)).ToList(),
+                From = new EmailAddress(From),
+                To = Emails.Select(email => new EmailAddress(email)).ToList(),
                 Subject = "Subject",
                 Body = "Body",
                 Attachments = Attachments,

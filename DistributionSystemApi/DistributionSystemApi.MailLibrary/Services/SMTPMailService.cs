@@ -8,6 +8,7 @@ namespace DistributionSystemApi.MailLibrary.Services
     {
         private const string InvalidSMTPClientConfExceptionMessage = "Check configuration parameters";
         private const string InvalidEmailsCountExceptionMessage = "Check mails count";
+        private const string TaskCanceledExceptionMessage = "Operation was canceled, mail was't sent";
         private readonly SmtpClient _smptClient;
         private readonly IMailValidationService _mailValidationService;
 
@@ -20,13 +21,17 @@ namespace DistributionSystemApi.MailLibrary.Services
 
         public async Task SendEmailAsync(MailModel mail, CancellationToken cancellationToken)
         {
-            _mailValidationService.ValidateMailAndThrowError(mail);
+            _mailValidationService.ValidateMail(mail);
 
             var mailMessage = CreateMailMessage(mail);
 
             try
             {
                 await _smptClient.SendMailAsync(mailMessage, cancellationToken);
+            }
+            catch (OperationCanceledException ex)
+            {
+                throw new TaskCanceledException(TaskCanceledExceptionMessage, ex);
             }
             catch (InvalidOperationException ex)
             {

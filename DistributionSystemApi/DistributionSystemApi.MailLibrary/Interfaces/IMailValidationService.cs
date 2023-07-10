@@ -9,6 +9,6 @@ namespace DistributionSystemApi.MailLibrary.Interfaces
 {
     public interface IMailValidationService
     {
-        void ValidateMailAndThrowError(MailModel mail);
+        void ValidateMail(MailModel mail);
     }
 }
