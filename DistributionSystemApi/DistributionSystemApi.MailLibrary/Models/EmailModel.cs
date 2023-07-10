@@ -10,12 +10,12 @@ namespace DistributionSystemApi.MailLibrary.Models
         public EmailModel(string address)
         {
             if (!IsValidAddress(address))
-                throw new ArgumentException("Invalid email format.", nameof(address));
+                throw new ArgumentException("Invalid email format ", nameof(address));
 
             Address = address;
         }
 
-        public bool IsValidAddress(string address)
+        private bool IsValidAddress(string address)
         {
             if (string.IsNullOrWhiteSpace(address))
                 return false;
