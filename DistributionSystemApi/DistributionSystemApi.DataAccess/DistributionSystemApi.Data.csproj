@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
@@ -17,7 +17,11 @@
   </ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\DistributionSystemApi.Data.Entities\DistributionSystemApi.Data.Entities.csproj" />
+	  <Folder Include="Migrations\" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\DistributionSystemApi.Services.Entities\DistributionSystemApi.Data.Entities.csproj" />
 	</ItemGroup>
 
 </Project>
