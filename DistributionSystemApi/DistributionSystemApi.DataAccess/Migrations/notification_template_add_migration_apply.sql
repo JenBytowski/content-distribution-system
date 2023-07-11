@@ -1,11 +1,6 @@
-use ContentDistributionSystem
+IF OBJECT_ID(N'dbo.NotificationTemplate',N'U') IS NULL
 
-begin tran
-
-IF OBJECT_ID(N'dbo.NotificationTemplate',N'U') is null
-create table dbo.NotificationTemplate(
-	ID varchar(200) primary key,
-	Description int not null
+CREATE TABLE dbo.NotificationTemplate(
+	Id UNIQUEIDENTIFIER PRIMARY KEY,
+	Description VARCHAR(200) NOT NULL
 	)
-
-commit;

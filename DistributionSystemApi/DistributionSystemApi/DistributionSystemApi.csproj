@@ -14,4 +14,8 @@
     <None Include="C:\Utility\content-distribution-system\content-distribution-system\DistributionSystemApi\DistributionSystemApi\.editorconfig" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\DistributionSystemApi.DataAccess\DistributionSystemApi.Data.csproj" />
+  </ItemGroup>
+
 </Project>

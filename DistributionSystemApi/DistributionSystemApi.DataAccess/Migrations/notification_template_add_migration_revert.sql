@@ -1,8 +1,6 @@
-use ContentDistributionSystem
+BEGIN TRAN
 
-begin tran
+IF OBJECT_ID(N'dbo.NotificationTemplate',N'U') IS NOT NULL AND NOT EXISTS (SELECT TOP 1 1 FROM NotificationTemplate)
+DROP TABLE dbo.NotificationTemplate
 
-IF OBJECT_ID(N'dbo.NotificationTemplate',N'U') is not null and not exists (select top 1 1 from NotificationTemplate)
-drop table dbo.NotificationTemplate
-
-commit;
+COMMIT;
