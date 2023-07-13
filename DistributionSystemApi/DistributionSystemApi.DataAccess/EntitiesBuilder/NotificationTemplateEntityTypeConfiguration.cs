@@ -10,9 +10,7 @@ namespace DistributionSystemApi.Data.EntitiesBuilder
         {
             builder
                 .Property(e => e.Id)
-                .HasMaxLength(200)
-                .IsUnicode(false)
-                .HasColumnName("ID");
+                .HasColumnName("Id");
 
             builder
                 .Property(e => e.Description)
