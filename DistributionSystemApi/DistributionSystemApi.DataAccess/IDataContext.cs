@@ -1,14 +1,17 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 
 namespace DistributionSystemApi.Data
 {
-    public interface IDataContext<TEntity>
+    public interface IDataContext<TEntity> where TEntity : BaseEntity
     {
-        IQueryable<TEntity> Get(Guid Id);
+        IQueryable<TEntity> Get();
+
         void Create(TEntity entity);
+
         void Update(TEntity entity);
+
         void Remove(TEntity entity);
-        void SaveChanges();
+
+        Task SaveChangesAsync(CancellationToken cancellationToken);
     }
 }

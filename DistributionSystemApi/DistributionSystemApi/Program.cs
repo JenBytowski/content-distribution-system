@@ -2,15 +2,12 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
-using DistributionSystemApi.Data;
-using Microsoft.EntityFrameworkCore;
+using DistributionSystemApi.ConfigurationExtensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddRazorPages();
-builder.Services.AddDbContext<ContentDistributionSystemContext>(options =>
-options.UseSqlServer("Server=localhost;Database=ContentDistributionSystem;Trusted_Connection=True;TrustServerCertificate=True")
-);
+DatabaseConfigurationExtension.ConfigureServices(builder);
 
 var app = builder.Build();
 

@@ -2,7 +2,7 @@
 
 namespace DistributionSystemApi.Data
 {
-    public class TEntity
+    public abstract class BaseEntity
     {
         public Guid Id { get; set; }
     }
