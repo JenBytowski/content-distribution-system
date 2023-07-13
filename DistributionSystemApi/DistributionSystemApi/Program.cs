@@ -7,7 +7,7 @@ using DistributionSystemApi.ConfigurationExtensions;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddRazorPages();
-DatabaseConfigurationExtension.ConfigureServices(builder);
+DatabaseConfigurationExtension.ConfigureServices(builder.Services, builder.Configuration);
 
 var app = builder.Build();
 

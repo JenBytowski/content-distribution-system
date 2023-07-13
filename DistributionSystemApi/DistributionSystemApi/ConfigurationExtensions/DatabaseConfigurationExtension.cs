@@ -5,10 +5,10 @@ namespace DistributionSystemApi.ConfigurationExtensions
 {
     public static class DatabaseConfigurationExtension
     {
-        public static void ConfigureServices(this WebApplicationBuilder builder)
+        public static void ConfigureServices(this IServiceCollection services, IConfiguration configuration)
         {
-            builder.Services.AddDbContext<ContentDistributionSystemContext>(options =>
-            options.UseSqlServer(builder.Configuration.GetConnectionString("ContentDistributionSystem")));
+            services.AddDbContext<ContentDistributionSystemContext>(options =>
+            options.UseSqlServer(configuration.GetConnectionString("ContentDistributionSystem")));
         }
     }
 }
