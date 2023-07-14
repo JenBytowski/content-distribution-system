@@ -3,11 +3,13 @@
 // </copyright>
 
 using DistributionSystemApi.ConfigurationExtensions;
+using DistributionSystemApi.MailLibrary;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddRazorPages();
 builder.Services.AddDBContext(builder.Configuration);
+builder.Services.AddMailServices(builder.Configuration);
 
 var app = builder.Build();
 
