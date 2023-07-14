@@ -6,6 +6,11 @@ namespace DistributionSystemApi.Data;
 
 public class ContentDistributionSystemContext : DbContext
 {
+    public ContentDistributionSystemContext(DbContextOptions<ContentDistributionSystemContext> options) : base(options)
+    {
+
+    }
+
     public DbSet<NotificationTemplate> NotificationTemplates { get; set; }
 
     protected void OnModelBuilder(ModelBuilder modelBuilder)
