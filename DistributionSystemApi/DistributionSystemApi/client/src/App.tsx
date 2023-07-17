@@ -1,9 +1,8 @@
 import './App.css';
-import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import DistributionsPage from "./components/DistributionsPage/DistributionsPage";
 import GroupPage from "./components/GroupPage/GroupPage";
-import MailTemplates from "./components/MailTemplates/MailTemplates";
+import MailTemplates from "./components/MailTemplatesPage/MailTemplates";
 import RecipientPage from "./components/RecipientPage/RecipientPage";
 import MenuPage from "./components/MenuPage/MenuPage";
 

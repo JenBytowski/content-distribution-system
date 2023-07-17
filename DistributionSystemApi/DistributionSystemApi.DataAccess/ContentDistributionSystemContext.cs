@@ -13,8 +13,14 @@ public class ContentDistributionSystemContext : DbContext
 
     public DbSet<NotificationTemplate> NotificationTemplates { get; set; }
 
-    protected void OnModelBuilder(ModelBuilder modelBuilder)
+    public DbSet<Recipient> Recipient { get; set; }
+
+    public DbSet<RecipientGroup> RecipientGroup { get; set; }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfiguration(new NotificationTemplateEntityTypeConfiguration());
+        modelBuilder.ApplyConfiguration(new RecipientEntityTypeConfiguration());
+        modelBuilder.ApplyConfiguration(new RecipientGroupEntityTypeConfiguration());
     }
 }

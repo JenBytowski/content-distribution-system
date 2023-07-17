@@ -8,7 +8,7 @@
         public static IServiceCollection AddDBContext(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddDbContext<ContentDistributionSystemContext>(options =>
-            options.UseSqlServer(configuration.GetConnectionString("ContentDistributionSystem")));
+            options.UseSqlServer(configuration.GetConnectionString("ContentDistributionSystemDatabase")));
 
             return services;
         }
