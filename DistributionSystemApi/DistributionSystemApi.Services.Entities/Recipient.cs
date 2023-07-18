@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace DistributionSystemApi.Data.Entities
 {
@@ -12,8 +13,6 @@ namespace DistributionSystemApi.Data.Entities
 
         public string? TelephoneNumber { get; set; }
 
-        public Guid? GroupId { get; set; }
-
-        public RecipientGroup? Group { get; set; }
+        public ICollection<RecipientRecipientGroup>? Groups { get; set; }
     }
 }

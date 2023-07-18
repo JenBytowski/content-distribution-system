@@ -1,31 +1,32 @@
-﻿using DistributionSystemApi.Data.Entities;
-using DistributionSystemApi.Data;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc;
+using DistributionSystemApi.Services;
+using DistributionSystemApi.Requests;
+using DistributionSystemApi.Responses;
 
 namespace DistributionSystemApi.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/RecipientGroup")]
     [ApiController]
     public class RecipientGroupController : ControllerBase
     {
-        private readonly ContentDistributionSystemContext _context;
+        private readonly RecipientGroupService _recipientGroupService;
 
-        public RecipientGroupController(ContentDistributionSystemContext context)
+        public RecipientGroupController(RecipientGroupService recipientGroupService)
         {
-            _context = context;
+            _recipientGroupService = recipientGroupService;
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<RecipientGroup>>> GetRecipientGroups()
+        public async Task<ActionResult<IEnumerable<RecipientGroupResponse>>> GetRecipientGroups(CancellationToken cancellationToken)
         {
-            return await _context.RecipientGroup.ToListAsync();
+            var recipientGroups = await _recipientGroupService.GetRecipientGroups(cancellationToken);
+            return recipientGroups;
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<RecipientGroup>> GetRecipientGroup(Guid id)
+        public async Task<ActionResult<RecipientGroupResponse>> GetRecipientGroup(Guid id, CancellationToken cancellationToken)
         {
-            var recipientGroup = await _context.RecipientGroup.FindAsync(id);
+            var recipientGroup = await _recipientGroupService.GetRecipientGroup(id, cancellationToken);
 
             if (recipientGroup == null)
             {
@@ -36,41 +37,34 @@ namespace DistributionSystemApi.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<RecipientGroup>> CreateRecipientGroup(RecipientGroup recipientGroup)
+        public async Task<ActionResult<CreateRecipientGroupRequest>> CreateRecipientGroup(CreateRecipientGroupRequest request, CancellationToken cancellationToken)
         {
-            recipientGroup.Id = Guid.NewGuid();
-            _context.RecipientGroup.Add(recipientGroup);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetRecipientGroup", new { id = recipientGroup.Id }, recipientGroup);
+            var createdRecipientGroup = await _recipientGroupService.CreateRecipientGroup(request, cancellationToken);
+            return CreatedAtAction("GetRecipientGroup", new { id = createdRecipientGroup.Id }, createdRecipientGroup);
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateRecipientGroup(Guid id, RecipientGroup recipientGroup)
+        public async Task<IActionResult> UpdateRecipientGroup(Guid id, CreateRecipientGroupRequest recipientGroup, CancellationToken cancellationToken)
         {
-            if (id != recipientGroup.Id)
+            var success = await _recipientGroupService.UpdateRecipientGroup(id, recipientGroup, cancellationToken);
+
+            if (!success)
             {
                 return BadRequest();
             }
-
-            _context.Entry(recipientGroup).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
 
             return NoContent();
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteRecipientGroup(Guid id)
+        public async Task<IActionResult> DeleteRecipientGroup(Guid id, CancellationToken cancellationToken)
         {
-            var recipientGroup = await _context.RecipientGroup.FindAsync(id);
+            var success = await _recipientGroupService.DeleteRecipientGroup(id, cancellationToken);
 
-            if (recipientGroup == null)
+            if (!success)
             {
                 return NotFound();
             }
-
-            _context.RecipientGroup.Remove(recipientGroup);
-            await _context.SaveChangesAsync();
 
             return NoContent();
         }

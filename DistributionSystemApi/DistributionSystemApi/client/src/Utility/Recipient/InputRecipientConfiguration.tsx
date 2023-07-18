@@ -35,16 +35,17 @@ export function returnInputRecipientConfiguration() {
       touched: false,
       label: "Telephone number",
     },
-    groupId: {
-      element: "select",
-      type: "string",
+    groups: {
+      type: "select",
+      value: [],
       validation: {
         required: false,
       },
       valid: true,
       touched: false,
-      label: "Group",
-      options: [{ value: "", displayValue: "No Group" }], 
+      label: "Groups",
+      multiple: true, 
+      options: [],
     },
   };
 }

@@ -39,7 +39,7 @@ function checkValidity(value: string, validation: any) {
 
     if (validationObject.isValid && validation.phoneNumber) {
       if (value.trim() !== "") { 
-        const phoneNumberRegex = /^\d{13}$/;
+        const phoneNumberRegex = /^\d{7,20}$/;
         validationObject.isValid = phoneNumberRegex.test(value);
         validationObject.errorMessage = "Incorrect phone number format";
       } else {

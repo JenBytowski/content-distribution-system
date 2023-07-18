@@ -1,33 +1,32 @@
-﻿using DistributionSystemApi.Data.Entities;
-using DistributionSystemApi.Data;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc;
+using DistributionSystemApi.Services;
+using DistributionSystemApi.Requests;
+using DistributionSystemApi.Responses;
 
 namespace DistributionSystemApi.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/Recipient")]
     [ApiController]
     public class RecipientController : ControllerBase
     {
-        private readonly ContentDistributionSystemContext _context;
+        private readonly RecipientService _recipientService;
 
-        public RecipientController(ContentDistributionSystemContext context)
+        public RecipientController(RecipientService recipientService)
         {
-            _context = context;
+            _recipientService = recipientService;
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Recipient>>> GetRecipients()
+        public async Task<ActionResult<IEnumerable<RecipientResponse>>> GetRecipients(CancellationToken cancellationToken)
         {
-            return await _context.Recipient.ToListAsync();
+            var recipients = await _recipientService.GetRecipients(1, 10, cancellationToken);
+            return recipients;
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Recipient>> GetRecipient(Guid id)
+        public async Task<ActionResult<RecipientResponse>> GetRecipient(Guid id, CancellationToken cancellationToken)
         {
-            var recipient = await _context.Recipient
-                .Include(r => r.Group)
-                .FirstOrDefaultAsync(r => r.Id == id);
+            var recipient = await _recipientService.GetRecipient(id, cancellationToken);
 
             if (recipient == null)
             {
@@ -38,41 +37,34 @@ namespace DistributionSystemApi.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Recipient>> CreateRecipient(Recipient recipient)
+        public async Task<ActionResult<RecipientResponse>> CreateRecipient(CreateRecipientRequest request, CancellationToken cancellationToken)
         {
-            recipient.Id = Guid.NewGuid();
-            _context.Recipient.Add(recipient);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetRecipient", new { id = recipient.Id }, recipient);
+            var createdRecipient = await _recipientService.CreateRecipient(request, cancellationToken);
+            return CreatedAtAction("GetRecipient", new { id = createdRecipient.Id }, createdRecipient);
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateRecipient(Guid id, Recipient recipient)
+        public async Task<IActionResult> UpdateRecipient(Guid id, CreateRecipientRequest recipient, CancellationToken cancellationToken)
         {
-            if (id != recipient.Id)
+            var success = await _recipientService.UpdateRecipient(id, recipient, cancellationToken);
+
+            if (!success)
             {
                 return BadRequest();
             }
-
-            _context.Entry(recipient).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
 
             return NoContent();
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteRecipient(Guid id)
+        public async Task<IActionResult> DeleteRecipient(Guid id, CancellationToken cancellationToken)
         {
-            var recipient = await _context.Recipient.FindAsync(id);
+            var success = await _recipientService.DeleteRecipient(id, cancellationToken);
 
-            if (recipient == null)
+            if (!success)
             {
                 return NotFound();
             }
-
-            _context.Recipient.Remove(recipient);
-            await _context.SaveChangesAsync();
 
             return NoContent();
         }

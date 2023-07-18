@@ -9,8 +9,9 @@ namespace DistributionSystemApi.Data.Entities
     public class RecipientGroup
     {
         public Guid Id { get; set; }
-        public string Title { get; set; }
-        public ICollection<Recipient>? Recipients { get; set; }
-    }
 
+        public string Title { get; set; }
+
+        public ICollection<RecipientRecipientGroup>? Recipients { get; set; }
+    }
 }

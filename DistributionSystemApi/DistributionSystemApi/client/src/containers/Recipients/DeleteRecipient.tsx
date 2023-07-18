@@ -7,14 +7,12 @@ import Button from '@mui/material/Button';
 interface DeleteRecipientProps {
   show: boolean;
   onHide: () => void;
-  onDelete: () => void;
   recipientId: string;
 }
 
 const DeleteRecipient: React.FC<DeleteRecipientProps> = ({
   show,
   onHide,
-  onDelete,
   recipientId,
 }) => {
   const handleDelete = () => {
@@ -22,7 +20,6 @@ const DeleteRecipient: React.FC<DeleteRecipientProps> = ({
       .delete(`/api/Recipient/${recipientId}`)
       .then(() => {
         console.log("Recipient successfully deleted");
-        onDelete();
         onHide();
       })
       .catch((error) => {

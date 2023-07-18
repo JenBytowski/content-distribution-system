@@ -11,5 +11,4 @@ export interface InputProps {
     shouldValidate: boolean;
     touched: boolean;
     errorMessage: string;
-    multiple?: boolean;
   }

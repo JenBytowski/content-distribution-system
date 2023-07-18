@@ -20,16 +20,19 @@ public class RecipientEntityTypeConfiguration : IEntityTypeConfiguration<Recipie
 
         builder
             .Property(e => e.Email)
-            .HasMaxLength(100)
+            .HasMaxLength(256)
             .IsRequired();
 
         builder
             .Property(e => e.TelephoneNumber)
-            .HasMaxLength(20);
+            .HasMaxLength(15);
 
         builder
-            .HasOne(e => e.Group)
-            .WithMany(g => g.Recipients)
-            .HasForeignKey(e => e.GroupId);
+            .HasIndex(e => e.TelephoneNumber)
+            .IsUnique();
+
+        builder
+            .HasIndex(e => e.Email) 
+            .IsUnique();
     }
 }

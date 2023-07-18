@@ -13,6 +13,7 @@ namespace DistributionSystemApi
             builder.Services.AddRazorPages();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddDBContext(builder.Configuration);
+            builder.Services.AddRecipientServices();
             builder.Services.AddControllers();
             builder.Services.AddMailServices(builder.Configuration);
             builder.Services.AddCors(options =>

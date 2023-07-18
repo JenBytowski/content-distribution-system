@@ -17,5 +17,9 @@ public class RecipientGroupEntityTypeConfiguration : IEntityTypeConfiguration<Re
             .Property(e => e.Title)
             .HasMaxLength(100)
             .IsRequired();
+
+        builder
+           .HasIndex(e => e.Title)
+           .IsUnique();
     }
 }

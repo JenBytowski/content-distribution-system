@@ -7,77 +7,72 @@ import { AxiosResponse } from "axios";
 import axios from "../../axios/axios";
 import Button from '@mui/material/Button';
 import "../Modal.scss";
-import Recipient from "../../components/Models/Recipients/Recipient";
+import { Checkbox } from "@mui/material";
 import { Group } from "../../components/Models/Group/Group";
 import { FormElement } from "../../components/Models/Form/FormElement";
 import { RecipientForm } from "../../components/Models/Form/RecipientForm";
+import { Groups } from "../../components/Models/Group/Groups";
+import CreateRecipientModel from "../../components/Models/Recipients/CreateRecipientModel";
 
 interface EditRecipientProps {
   show: boolean;
   onHide: () => void;
-  onRecipientUpdated: (recipient: Recipient) => void;
-  recipient: Recipient;
+  recipientId: string;
 }
 
 const EditRecipient: React.FC<EditRecipientProps> = ({
   show,
   onHide,
-  onRecipientUpdated,
-  recipient,
+  recipientId,
 }) => {
   const [isFormValid, setFormValid] = useState(false);
   const [formElementsArray, setFormElementsArray] = useState<FormElement[]>([]);
   const [recipientForm, setRecipientForm] = useState<RecipientForm>({});
+  const [groups, setGroups] = useState<Group[]>([]); 
+  const [selectedGroups, setSelectedGroups] = useState<Groups[]>([]); 
 
+ 
   useEffect(() => {
-    const recipientFormConfig = returnInputRecipientConfiguration();
-    setRecipientForm(recipientFormConfig);
-    setFormElementsArray(
-      formUtilityActions.convertStateToArrayOfFormObjects(recipientFormConfig)
-    );
-  
-    const fetchRecipientGroups = async () => {
+    const fetchRecipientData = async () => {
       try {
-        const response = await axios.get("/api/RecipientGroup");
-        const groups = response.data;
+        const groupsResponse = await axios.get("/api/RecipientGroup");
+        const recipientDataResponse = await axios.get(`/api/Recipient/${recipientId}`);
+
+        const groupsData = groupsResponse.data;
+        const recipientData = recipientDataResponse.data;
+
+        const recipientFormConfig = returnInputRecipientConfiguration();
         const updatedRecipientFormConfig = {
           ...recipientFormConfig,
           title: {
             ...recipientFormConfig.title,
-            value: recipient.title,
+            value: recipientData.title,
           },
           email: {
             ...recipientFormConfig.email,
-            value: recipient.email,
+            value: recipientData.email,
           },
           telephoneNumber: {
             ...recipientFormConfig.telephoneNumber,
-            value: recipient.telephoneNumber || "",
-          },
-          groupId: {
-            ...recipientFormConfig.groupId,
-            value: recipient.groupId || "",
-            options: [
-              { value: "", displayValue: "No Group" },
-              ...groups.map((group: Group) => ({
-                value: group.id,
-                displayValue: group.title,
-                selected: group.id === recipient.groupId,
-              })),
-            ],
+            value: recipientData.telephoneNumber !== null ? recipientData.telephoneNumber : "",
           },
         };
-  
+
         setRecipientForm(updatedRecipientFormConfig);
         setFormElementsArray(
           formUtilityActions.convertStateToArrayOfFormObjects(updatedRecipientFormConfig)
         );
+        setGroups(groupsData || []);
+        setSelectedGroups(recipientData.groups || []);
       } catch (error) {
-        console.error("Error fetching recipient groups:", error);
+        console.error("Error fetching recipient data:", error);
       }
     };
-    fetchRecipientGroups().catch(console.error);
-  }, [recipient]);
+
+    if (show && recipientId) {
+      fetchRecipientData().catch(console.error);
+    }
+  }, [show, recipientId]);
 
   const handleChangeEvent = (
     event: ChangeEvent<HTMLInputElement | HTMLSelectElement>,
@@ -89,37 +84,45 @@ const EditRecipient: React.FC<EditRecipientProps> = ({
       createdRecipientForm,
       id
     );
-  
+
     const counter = formUtilityActions.countInvalidElements(createdRecipientForm);
-  
+
     setFormElementsArray(
       formUtilityActions.convertStateToArrayOfFormObjects(createdRecipientForm)
     );
     setRecipientForm(createdRecipientForm);
     setFormValid(counter === 0);
-  
+
     const updatedElement = { ...createdRecipientForm[id] };
     updatedElement.touched = true;
     createdRecipientForm[id] = updatedElement;
+  };
+
+  const handleGroupCheckboxChange = (event: ChangeEvent<HTMLInputElement>, groupId: string) => {
+    setSelectedGroups((prevSelectedGroups) => {
+      const isGroupSelected = prevSelectedGroups.some((group) => group.groupId === groupId);
+      const updatedGroups = isGroupSelected
+        ? prevSelectedGroups.filter((group) => group.groupId !== groupId)
+        : [...prevSelectedGroups, { groupId }];
+      return updatedGroups;
+    });
   };
 
   const updateRecipient = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     const recipientToUpdate = {
-      id: recipient.id,
+      id: recipientId,
       title: recipientForm.title.value,
       email: recipientForm.email.value,
-      telephoneNumber: recipientForm.telephoneNumber.value,
-      groupId: recipientForm.groupId.value === "" ? null : recipientForm.groupId.value,
+      telephoneNumber: recipientForm.telephoneNumber.value !== "" ? recipientForm.telephoneNumber.value : null,
+      groups: selectedGroups.map((group) => group.groupId),
     };
 
     axios
-      .put(`/api/Recipient/${recipient.id}`, recipientToUpdate)
+      .put(`/api/Recipient/${recipientId}`, recipientToUpdate)
       .then((response: AxiosResponse<any>) => {
-        console.log("Recipient successfully edit", response.data);
-
-        onRecipientUpdated(response.data);
+        console.log("Recipient successfully updated", response.data);
 
         onHide();
       })
@@ -171,6 +174,20 @@ const EditRecipient: React.FC<EditRecipientProps> = ({
           </Form>
         </Container>
       </Modal.Body>
+      <Modal.Footer>
+        <Container>
+          <h5>Select Groups</h5>
+          {groups.map((group: Group) => (
+            <div key={group.id}>
+              <Checkbox
+                checked={selectedGroups.some((g) => g.groupId === group.id)}
+                onChange={(event) => handleGroupCheckboxChange(event, group.id)}
+              />
+              {group.title}
+            </div>
+          ))}
+        </Container>
+      </Modal.Footer>
     </Modal>
   );
 };

@@ -14,19 +14,26 @@ import EditIcon from '@material-ui/icons/Edit';
 import DeleteRecipient from "../../containers/Recipients/DeleteRecipient";
 import EditRecipient from "../../containers/Recipients/EditRecipient";
 import Recipient from "../Models/Recipients/Recipient";
+import CreateRecipientModel from "../Models/Recipients/CreateRecipientModel";
 import { Group } from "../Models/Group/Group";
+import { Groups } from "../Models/Group/Groups";
 
 export default function RecipientPage() {
   const [data, setData] = useState<Recipient[]>([]);
   const [showCreateModal, setShowCreateModal] = useState(false);
-  const [editModalRecipient, setEditModalRecipient] = useState<Recipient | null>(null);
+  const [editModalRecipientId, setEditModalRecipientId] = useState<string | null>(null);
   const [deleteModalRecipient, setDeleteModalRecipient] = useState<Recipient | null>(null);
-  const [groups, setGroups] = useState<Group[]>([]);
+  const [allGroups, setGroups] = useState<Group[]>([]);
+  const [groupNames, setGroupNames] = useState<string[]>([]);
+  useEffect(() => {
+    setGroupNames(data.map((recipient) => getGroupNamesByIds(recipient.groups, allGroups)));
+  }, [data, allGroups]);
 
   const fetchData = async () => {
     try {
       const recipientResponse = await axios.get("/api/Recipient");
       const groupResponse = await axios.get("/api/RecipientGroup");
+      
       setData(recipientResponse.data);
       setGroups(groupResponse.data);
     } catch (error) {
@@ -34,8 +41,12 @@ export default function RecipientPage() {
     }
   };
 
-  const handleEditModalOpen = (recipient: Recipient) => {
-    setEditModalRecipient(recipient);
+  useEffect(() => {
+    setGroupNames(data.map((recipient) => getGroupNamesByIds(recipient.groups, allGroups)));
+  }, [data, allGroups]);
+
+  const handleEditModalOpen = (recipientId: string) => {
+    setEditModalRecipientId(recipientId);
   };
   
   const handleDeleteModalOpen = (recipient: Recipient) => {
@@ -43,44 +54,64 @@ export default function RecipientPage() {
   };
 
   const handleEditModalClose = () => {
-    setEditModalRecipient(null);
+    setEditModalRecipientId(null);
+    fetchData();
   };
 
   const handleDeleteModalClose = () => {
     setDeleteModalRecipient(null);
+    fetchData();
   };
 
   const handleCreateModalOpen = () => {
     setShowCreateModal(true);
+    fetchData();
   };
 
   const handleCreateModalClose = () => {
     setShowCreateModal(false);
+    fetchData();
   };
 
   useEffect(() => {
     fetchData().catch(console.error);
   }, []);
 
-  const handleRecipientUpdated = (updatedRecipient: Recipient) => {
-    console.log("Recipient updated:", updatedRecipient);
-    fetchData();
-  };
-
-  const handleRecipientDeleted = () => {
-    console.log("Recipient deleted");
-    fetchData();
-  };
-
-  const handleCreateModalSave = (recipient: Recipient) => {
-    const newRecipient = { ...recipient, group: null };
-    setData((prevData) => [...prevData, newRecipient]);
+  const handleCreateModalSave = (recipient: CreateRecipientModel, selectedGroups: Groups[]) => {
+    const newGroups: Groups[] = selectedGroups.map((groupId) => ({
+      recipientId: String(recipient.id),
+      groupId: String(groupId),
+    }));
+  
+    const newRecipient: Recipient = {
+      id: recipient.id,
+      title: recipient.title,
+      email: recipient.email,
+      telephoneNumber: recipient.telephoneNumber,
+      groups: newGroups,
+    };
+  
+    setData((prevData: Recipient[]) => [...prevData, newRecipient]);
     setShowCreateModal(false);
   };
 
-  const getGroupNameById = (groupId: string | null | undefined) => {
-    const group = groups.find((group) => String(groupId) === String(group.id) );
-    return group ? group.title : "No Group";
+  const getGroupNamesByIds = (groups: Groups[], allGroups: Group[]) => {
+    if (allGroups.length === 0) {
+      return "No Group";
+    }
+  
+    const groupNames = groups
+      .map((group) => {
+        const foundGroup = allGroups.find((item) => item.id === group.groupId);
+        return foundGroup ? foundGroup.title : null;
+      })
+      .filter(Boolean);
+  
+    if (groupNames.length === 0) {
+      return "No Group";
+    }
+  
+    return groupNames.join(", ");
   };
 
   return (
@@ -92,7 +123,7 @@ export default function RecipientPage() {
               <TableCell align="center">Title</TableCell>
               <TableCell align="center">Email</TableCell>
               <TableCell align="center">Telephone Number</TableCell>
-              <TableCell align="center">Group</TableCell>
+              <TableCell align="center">Groups</TableCell>
               <TableCell>
                 <EditIcon />
               </TableCell>
@@ -102,51 +133,52 @@ export default function RecipientPage() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {data.map((recipient) => (
+          {data.map((recipient, index) => (
               <TableRow key={recipient.id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                 <TableCell align="center">{recipient.title}</TableCell>
                 <TableCell align="center">{recipient.email}</TableCell>
-                <TableCell align="center">{recipient.telephoneNumber || "-"}</TableCell>
+                <TableCell align="center">{recipient.telephoneNumber == null ? "-" : recipient.telephoneNumber}</TableCell>
                 <TableCell align="center">
-                  {groups.length > 0 ? getGroupNameById(recipient.groupId) : "Loading..."}
+        {allGroups.length > 0 ? groupNames[index] : "No Group"}
+      </TableCell>
+                <TableCell>
+                  <EditIcon aria-label="edit" onClick={() => handleEditModalOpen(recipient.id)} />
                 </TableCell>
                 <TableCell>
-              <EditIcon aria-label="edit" onClick={() => handleEditModalOpen(recipient)} />
-            </TableCell>
-            <TableCell>
-              <DeleteIcon aria-label="delete" onClick={() => handleDeleteModalOpen(recipient)} />
-            </TableCell>
-            {editModalRecipient && (
-              <EditRecipient
-                show={editModalRecipient === recipient}
-                onHide={handleEditModalClose}
-                onRecipientUpdated={handleRecipientUpdated}
-                recipient={recipient}
-              />
-            )}
-            {deleteModalRecipient && (
-              <DeleteRecipient
-                show={deleteModalRecipient === recipient}
-                onHide={handleDeleteModalClose}
-                onDelete={handleRecipientDeleted}
-                recipientId={recipient.id}
-              />
-            )}
-          </TableRow>
-        ))}
-      </TableBody>
+                  <DeleteIcon aria-label="delete" onClick={() => handleDeleteModalOpen(recipient)} />
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
         </Table>
       </TableContainer>
   
       <Button className="custom-btn add" onClick={handleCreateModalOpen}>
         <span>Add recipient</span>
       </Button>
-  
+
+      {editModalRecipientId && (
+        <EditRecipient
+          show={Boolean(editModalRecipientId)}
+          onHide={handleEditModalClose}
+          recipientId={editModalRecipientId}
+        />
+      )}
+
+      {deleteModalRecipient && (
+        <DeleteRecipient
+          show={Boolean(deleteModalRecipient)}
+          onHide={handleDeleteModalClose}
+          recipientId={deleteModalRecipient.id}
+        />
+      )}
+      
       <CreateRecipient
         show={showCreateModal}
         onHide={handleCreateModalClose}
         onRecipientCreated={handleCreateModalSave}
-      />
+        availableGroups={allGroups}
+/>
     </>
   );
 }
