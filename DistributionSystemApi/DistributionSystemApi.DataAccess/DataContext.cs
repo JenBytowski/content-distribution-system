@@ -1,25 +1,34 @@
-﻿using DistributionSystemApi.Data.Interfaces;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-
-namespace DistributionSystemApi.Data
+﻿namespace DistributionSystemApi.Data
 {
+    using System.Linq;
+    using System.Threading;
+    using System.Threading.Tasks;
+    using DistributionSystemApi.Data.Entities;
+    using DistributionSystemApi.Data.Interfaces;
+
     public class DataContext : IDataContext
     {
         private readonly ContentDistributionSystemContext contentDistributionSystemContext;
 
-        public void Create<TEntity>(TEntity entity) where TEntity : BaseEntity
+        public DataContext(ContentDistributionSystemContext contentDistributionSystemContext)
+        {
+            this.contentDistributionSystemContext = contentDistributionSystemContext;
+        }
+
+        public void Create<TEntity>(TEntity entity)
+            where TEntity : BaseEntity
         {
             contentDistributionSystemContext.Set<TEntity>().Add(entity);
         }
 
-        public IQueryable<TEntity> Get<TEntity>() where TEntity : BaseEntity
+        public IQueryable<TEntity> Get<TEntity>()
+            where TEntity : BaseEntity
         {
             return contentDistributionSystemContext.Set<TEntity>();
         }
 
-        public void Remove<TEntity>(TEntity entity) where TEntity : BaseEntity
+        public void Remove<TEntity>(TEntity entity)
+            where TEntity : BaseEntity
         {
             contentDistributionSystemContext.Set<TEntity>().Remove(entity);
         }
@@ -29,7 +38,8 @@ namespace DistributionSystemApi.Data
             await contentDistributionSystemContext.SaveChangesAsync(cancellationToken);
         }
 
-        public void Update<TEntity>(TEntity entity) where TEntity : BaseEntity
+        public void Update<TEntity>(TEntity entity)
+            where TEntity : BaseEntity
         {
             contentDistributionSystemContext.Set<TEntity>().Update(entity);
         }

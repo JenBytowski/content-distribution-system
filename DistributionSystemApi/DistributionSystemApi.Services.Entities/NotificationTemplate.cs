@@ -1,6 +1,6 @@
-﻿using System;
+﻿namespace DistributionSystemApi.Data.Entities;
 
-namespace DistributionSystemApi.Data.Entities;
+using System;
 
 public class NotificationTemplate
 {

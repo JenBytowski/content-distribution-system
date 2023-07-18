@@ -1,14 +1,14 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿namespace DistributionSystemApi.Data;
+
 using DistributionSystemApi.Data.Entities;
 using DistributionSystemApi.Data.EntitiesBuilder;
-
-namespace DistributionSystemApi.Data;
+using Microsoft.EntityFrameworkCore;
 
 public class ContentDistributionSystemContext : DbContext
 {
-    public ContentDistributionSystemContext(DbContextOptions<ContentDistributionSystemContext> options) : base(options)
+    public ContentDistributionSystemContext(DbContextOptions<ContentDistributionSystemContext> options)
+        : base(options)
     {
-
     }
 
     public DbSet<NotificationTemplate> NotificationTemplates { get; set; }
@@ -18,4 +18,3 @@ public class ContentDistributionSystemContext : DbContext
         modelBuilder.ApplyConfiguration(new NotificationTemplateEntityTypeConfiguration());
     }
 }
-
