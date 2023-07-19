@@ -1,4 +1,7 @@
-﻿using DistributionSystemApi.Services;
+﻿using DistributionSystemApi.Data;
+using DistributionSystemApi.Data.Interfaces;
+using DistributionSystemApi.Interfaces;
+using DistributionSystemApi.Services;
 
 namespace DistributionSystemApi.ConfigurationExtensions
 {
@@ -6,8 +9,9 @@ namespace DistributionSystemApi.ConfigurationExtensions
     {
         public static IServiceCollection AddRecipientServices(this IServiceCollection services)
         {
-            services.AddScoped<RecipientGroupService>();
-            services.AddScoped<RecipientService>();
+            services.AddScoped<IDataContext, DataContext>();
+            services.AddScoped<IRecipientService, RecipientService>();
+            services.AddScoped<IRecipientGroupService, RecipientGroupService>();
 
             return services;
         }

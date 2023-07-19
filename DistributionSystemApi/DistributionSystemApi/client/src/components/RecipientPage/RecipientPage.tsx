@@ -8,6 +8,8 @@ import Table from '@mui/material/Table';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
+import {TablePagination} from "@mui/material";
+import { TableFooter } from "@mui/material";
 import Paper from '@mui/material/Paper';
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
@@ -24,6 +26,9 @@ export default function RecipientPage() {
   const [editModalRecipientId, setEditModalRecipientId] = useState<string | null>(null);
   const [deleteModalRecipient, setDeleteModalRecipient] = useState<Recipient | null>(null);
   const [allGroups, setGroups] = useState<Group[]>([]);
+  const [page, setPage] = useState(1);
+const [pageSize, setPageSize] = useState(10);
+const [totalCount, setTotalCount] = useState(0);
   const [groupNames, setGroupNames] = useState<string[]>([]);
   useEffect(() => {
     setGroupNames(data.map((recipient) => getGroupNamesByIds(recipient.groups, allGroups)));
@@ -31,11 +36,11 @@ export default function RecipientPage() {
 
   const fetchData = async () => {
     try {
-      const recipientResponse = await axios.get("/api/Recipient");
+      const response = await axios.get(`/api/Recipient?page=${page}&pageSize=${pageSize}`);
       const groupResponse = await axios.get("/api/RecipientGroup");
-      
-      setData(recipientResponse.data);
+      setData(response.data.items);
       setGroups(groupResponse.data);
+      setTotalCount(response.data.totalCount);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
@@ -72,7 +77,14 @@ export default function RecipientPage() {
     setShowCreateModal(false);
     fetchData();
   };
-
+  const handlePageChange = (event: React.MouseEvent<HTMLButtonElement> | null, newPage: number) => {
+    setPage(newPage);
+  };
+  
+  const handlePageSizeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setPageSize(Number(event.target.value));
+    setPage(1);
+  };
   useEffect(() => {
     fetchData().catch(console.error);
   }, []);
@@ -90,6 +102,12 @@ export default function RecipientPage() {
       telephoneNumber: recipient.telephoneNumber,
       groups: newGroups,
     };
+
+    const newTotalPages = Math.ceil((totalCount + 1) / pageSize);
+
+  if (page !== newTotalPages) {
+    setPage(newTotalPages);
+  }
   
     setData((prevData: Recipient[]) => [...prevData, newRecipient]);
     setShowCreateModal(false);
@@ -150,6 +168,19 @@ export default function RecipientPage() {
               </TableRow>
             ))}
           </TableBody>
+          <TableFooter>
+  <TableRow>
+    <TablePagination
+      rowsPerPageOptions={[5, 10, 25]}
+      colSpan={6}
+      count={totalCount}
+      rowsPerPage={pageSize}
+      page={page - 1}
+      onPageChange={handlePageChange}
+      onRowsPerPageChange={handlePageSizeChange}
+    />
+  </TableRow>
+</TableFooter>
         </Table>
       </TableContainer>
   

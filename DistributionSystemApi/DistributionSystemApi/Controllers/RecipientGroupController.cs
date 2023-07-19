@@ -2,6 +2,7 @@
 using DistributionSystemApi.Services;
 using DistributionSystemApi.Requests;
 using DistributionSystemApi.Responses;
+using DistributionSystemApi.Interfaces;
 
 namespace DistributionSystemApi.Controllers
 {
@@ -9,9 +10,9 @@ namespace DistributionSystemApi.Controllers
     [ApiController]
     public class RecipientGroupController : ControllerBase
     {
-        private readonly RecipientGroupService _recipientGroupService;
+        private readonly IRecipientGroupService _recipientGroupService;
 
-        public RecipientGroupController(RecipientGroupService recipientGroupService)
+        public RecipientGroupController(IRecipientGroupService recipientGroupService)
         {
             _recipientGroupService = recipientGroupService;
         }

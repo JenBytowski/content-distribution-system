@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace DistributionSystemApi.Data.Entities
 {
-    public class RecipientGroup
+    public class RecipientGroup : BaseEntity
     {
         public Guid Id { get; set; }
 
         public string Title { get; set; }
 
-        public ICollection<RecipientRecipientGroup>? Recipients { get; set; }
+        public List<RecipientRecipientGroup>? Recipients { get; set; }
     }
 }

@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using DistributionSystemApi.Services;
 using DistributionSystemApi.Requests;
 using DistributionSystemApi.Responses;
+using DistributionSystemApi.Models;
+using DistributionSystemApi.Interfaces;
 
 namespace DistributionSystemApi.Controllers
 {
@@ -9,18 +10,19 @@ namespace DistributionSystemApi.Controllers
     [ApiController]
     public class RecipientController : ControllerBase
     {
-        private readonly RecipientService _recipientService;
+        private readonly IRecipientService _recipientService;
 
-        public RecipientController(RecipientService recipientService)
+        public RecipientController(IRecipientService recipientService)
         {
             _recipientService = recipientService;
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<RecipientResponse>>> GetRecipients(CancellationToken cancellationToken)
+        public async Task<ActionResult<PaginationPage<RecipientResponse>>> GetRecipients(int page = 1, int pageSize = 10, CancellationToken cancellationToken = default)
         {
-            var recipients = await _recipientService.GetRecipients(1, 10, cancellationToken);
-            return recipients;
+            var pageResult = await _recipientService.GetRecipients(page, pageSize, cancellationToken);
+
+            return pageResult;
         }
 
         [HttpGet("{id}")]

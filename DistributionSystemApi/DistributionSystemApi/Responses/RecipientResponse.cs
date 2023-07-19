@@ -10,6 +10,6 @@
 
         public string? TelephoneNumber { get; set; }
 
-        public ICollection<RecipientRecipientGroupResponse>? Groups { get; set; }
+        public List<RecipientRecipientGroupResponse>? Groups { get; set; }
     }
 }

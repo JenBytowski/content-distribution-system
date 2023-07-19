@@ -6,6 +6,6 @@
 
         public string Title { get; set; }
 
-        public ICollection<RecipientRecipientGroupResponse>? Recipients { get; set; }
+        public List<RecipientRecipientGroupResponse>? Recipients { get; set; }
     }
 }

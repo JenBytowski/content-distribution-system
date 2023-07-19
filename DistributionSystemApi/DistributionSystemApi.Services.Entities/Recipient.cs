@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace DistributionSystemApi.Data.Entities
 {
-    public class Recipient
+    public class Recipient : BaseEntity
     {
         public Guid Id { get; set; }
 
@@ -13,6 +13,6 @@ namespace DistributionSystemApi.Data.Entities
 
         public string? TelephoneNumber { get; set; }
 
-        public ICollection<RecipientRecipientGroup>? Groups { get; set; }
+        public List<RecipientRecipientGroup>? Groups { get; set; }
     }
 }

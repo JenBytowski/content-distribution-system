@@ -7,6 +7,10 @@ public class RecipientRecipientGroupEntityTypeConfiguration : IEntityTypeConfigu
     public void Configure(EntityTypeBuilder<RecipientRecipientGroup> builder)
     {
         builder
+            .Property(e => e.Id)
+            .HasColumnName("Id");
+
+        builder
             .HasKey(rrg => new { rrg.RecipientId, rrg.GroupId });
 
         builder
