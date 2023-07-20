@@ -1,8 +1,8 @@
-﻿using DistributionSystemApi.Data;
-using Microsoft.EntityFrameworkCore;
-
-namespace DistributionSystemApi.ConfigurationExtensions
+﻿namespace DistributionSystemApi.ConfigurationExtensions
 {
+    using DistributionSystemApi.Data;
+    using Microsoft.EntityFrameworkCore;
+
     public static class DatabaseConfigurationExtension
     {
         public static IServiceCollection AddDBContext(this IServiceCollection services, IConfiguration configuration)

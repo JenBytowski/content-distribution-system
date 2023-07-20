@@ -1,9 +1,9 @@
-﻿using DistributionSystemApi.Data.Entities;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
-
-namespace DistributionSystemApi.Data.EntitiesBuilder
+﻿namespace DistributionSystemApi.Data.EntitiesBuilder
 {
+    using DistributionSystemApi.Data.Entities;
+    using Microsoft.EntityFrameworkCore;
+    using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
     public class NotificationTemplateEntityTypeConfiguration : IEntityTypeConfiguration<NotificationTemplate>
     {
         public void Configure(EntityTypeBuilder<NotificationTemplate> builder)
