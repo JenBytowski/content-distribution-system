@@ -1,7 +1,7 @@
 namespace DistributionSystemApi
 {
-    using DistributionSystemApi.ConfigurationExtensions;
-    using DistributionSystemApi.MailLibrary;
+    using global::DistributionSystemApi.ConfigurationExtensions;
+    using global::DistributionSystemApi.MailLibrary;
     using Microsoft.AspNetCore.Builder;
 
     public class Program
@@ -41,13 +41,13 @@ namespace DistributionSystemApi
             app.UseRouting();
             app.UseCors("AllowAnyOrigin");
 
+            app.UseAuthorization();
+            app.MapRazorPages();
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
             });
-
-            app.UseAuthorization();
-            app.MapRazorPages();
 
             app.Run();
         }

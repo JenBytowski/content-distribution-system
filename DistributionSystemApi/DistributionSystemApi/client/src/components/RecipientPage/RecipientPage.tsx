@@ -27,8 +27,8 @@ export default function RecipientPage() {
   const [deleteModalRecipient, setDeleteModalRecipient] = useState<Recipient | null>(null);
   const [allGroups, setGroups] = useState<Group[]>([]);
   const [page, setPage] = useState(1);
-const [pageSize, setPageSize] = useState(10);
-const [totalCount, setTotalCount] = useState(0);
+  const [pageSize, setPageSize] = useState(10);
+  const [totalCount, setTotalCount] = useState(0);
   const [groupNames, setGroupNames] = useState<string[]>([]);
   useEffect(() => {
     setGroupNames(data.map((recipient) => getGroupNamesByIds(recipient.groups, allGroups)));

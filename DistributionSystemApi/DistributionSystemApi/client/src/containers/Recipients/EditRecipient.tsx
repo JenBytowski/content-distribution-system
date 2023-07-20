@@ -1,6 +1,6 @@
 import React, { useEffect, useState, ChangeEvent } from "react";
 import Input from "../../UI/Inputs/Input";
-import { Form, FormGroup, Col, Container, Row, Modal } from "react-bootstrap";
+import { Modal, Form, FormGroup, Container, Row, Toast } from "react-bootstrap";
 import { returnInputRecipientConfiguration } from "../../Utility/Recipient/InputRecipientConfiguration";
 import * as formUtilityActions from "../../Utility/Recipient/RecipientFormUtility";
 import { AxiosResponse } from "axios";
@@ -12,7 +12,6 @@ import { Group } from "../../components/Models/Group/Group";
 import { FormElement } from "../../components/Models/Form/FormElement";
 import { RecipientForm } from "../../components/Models/Form/RecipientForm";
 import { Groups } from "../../components/Models/Group/Groups";
-import CreateRecipientModel from "../../components/Models/Recipients/CreateRecipientModel";
 
 interface EditRecipientProps {
   show: boolean;
@@ -30,7 +29,7 @@ const EditRecipient: React.FC<EditRecipientProps> = ({
   const [recipientForm, setRecipientForm] = useState<RecipientForm>({});
   const [groups, setGroups] = useState<Group[]>([]); 
   const [selectedGroups, setSelectedGroups] = useState<Groups[]>([]); 
-
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
  
   useEffect(() => {
     const fetchRecipientData = async () => {
@@ -128,6 +127,11 @@ const EditRecipient: React.FC<EditRecipientProps> = ({
       })
       .catch((error) => {
         console.error("Error updating recipient", error);
+        if (error.response && error.response.data && error.response.data.message) {
+          setErrorMessage(errorMessage); 
+        } else {
+          setErrorMessage("An error occurred while updating");
+        }
       });
   };
 
@@ -138,6 +142,12 @@ const EditRecipient: React.FC<EditRecipientProps> = ({
       </Modal.Header>
       <Modal.Body>
         <Container>
+        {errorMessage && (
+            <Toast onClose={() => setErrorMessage(null)} delay={5000} autohide>
+                <strong className="me-auto">Error</strong>
+              <Toast.Body>{errorMessage}</Toast.Body>
+            </Toast>
+          )}
           <Form onSubmit={updateRecipient}>
             {formElementsArray.map((element) => (
               <Input
@@ -175,7 +185,7 @@ const EditRecipient: React.FC<EditRecipientProps> = ({
         </Container>
       </Modal.Body>
       <Modal.Footer>
-        <Container>
+        <Container className = "groups-container">
           <h5>Select Groups</h5>
           {groups.map((group: Group) => (
             <div key={group.id}>

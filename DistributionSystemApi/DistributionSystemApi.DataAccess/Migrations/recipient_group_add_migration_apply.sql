@@ -19,12 +19,12 @@ GO
 IF OBJECT_ID(N'dbo.RecipientRecipientGroup',N'U') IS NULL
 
 CREATE TABLE dbo.RecipientRecipientGroup (
-	Id UNIQUEIDENTIFIER PRIMARY KEY,
+	Id UNIQUEIDENTIFIER,
     RecipientId UNIQUEIDENTIFIER,
     GroupId UNIQUEIDENTIFIER,
     PRIMARY KEY (RecipientId, GroupId),
-    FOREIGN KEY (RecipientId) REFERENCES dbo.Recipient(Id) ON DELETE CASCADE ON UPDATE CASCADE,
-    FOREIGN KEY (GroupId) REFERENCES dbo.RecipientGroup(Id) ON DELETE CASCADE ON UPDATE CASCADE
+    FOREIGN KEY (RecipientId) REFERENCES dbo.Recipient(Id),
+    FOREIGN KEY (GroupId) REFERENCES dbo.RecipientGroup(Id)
 )
 GO
 

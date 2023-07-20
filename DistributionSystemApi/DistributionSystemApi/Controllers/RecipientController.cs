@@ -1,8 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using DistributionSystemApi.Requests;
-using DistributionSystemApi.Responses;
-using DistributionSystemApi.Models;
 using DistributionSystemApi.Interfaces;
+using DistributionSystemApi.DistributionSystemApi.Services.Models;
+using DistributionSystemApi.Responses;
+using DistributionSystemApi.Requests;
+using AutoMapper;
 
 namespace DistributionSystemApi.Controllers
 {
@@ -11,18 +12,20 @@ namespace DistributionSystemApi.Controllers
     public class RecipientController : ControllerBase
     {
         private readonly IRecipientService _recipientService;
+        private readonly IMapper _mapper;
 
-        public RecipientController(IRecipientService recipientService)
+        public RecipientController(IRecipientService recipientService, IMapper mapper)
         {
             _recipientService = recipientService;
+            _mapper = mapper;
         }
 
         [HttpGet]
-        public async Task<ActionResult<PaginationPage<RecipientResponse>>> GetRecipients(int page = 1, int pageSize = 10, CancellationToken cancellationToken = default)
+        public async Task<ActionResult<PaginationPage<RecipientResponse>>> GetRecipients(uint page = 1, uint pageSize = 10, CancellationToken cancellationToken = default)
         {
             var pageResult = await _recipientService.GetRecipients(page, pageSize, cancellationToken);
-
-            return pageResult;
+            var response = _mapper.Map<PaginationPage<RecipientResponse>>(pageResult);
+            return response;
         }
 
         [HttpGet("{id}")]
@@ -35,25 +38,31 @@ namespace DistributionSystemApi.Controllers
                 return NotFound();
             }
 
-            return recipient;
+            var response = _mapper.Map<RecipientResponse>(recipient);
+            return response;
         }
 
         [HttpPost]
         public async Task<ActionResult<RecipientResponse>> CreateRecipient(CreateRecipientRequest request, CancellationToken cancellationToken)
         {
-            var createdRecipient = await _recipientService.CreateRecipient(request, cancellationToken);
-            return CreatedAtAction("GetRecipient", new { id = createdRecipient.Id }, createdRecipient);
-        }
+            var serviceModel = _mapper.Map<CreateRecipient>(request);
+            var createdRecipientId = await _recipientService.CreateRecipient(serviceModel, cancellationToken);
+            var createdRecipient = await _recipientService.GetRecipient(createdRecipientId, cancellationToken);
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateRecipient(Guid id, CreateRecipientRequest recipient, CancellationToken cancellationToken)
-        {
-            var success = await _recipientService.UpdateRecipient(id, recipient, cancellationToken);
-
-            if (!success)
+            if (createdRecipient == null)
             {
                 return BadRequest();
             }
+
+            var response = _mapper.Map<RecipientResponse>(createdRecipient);
+            return CreatedAtAction("GetRecipient", new { id = response.Id }, response);
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateRecipient(Guid id, CreateRecipientRequest request, CancellationToken cancellationToken)
+        {
+            var serviceModel = _mapper.Map<CreateRecipient>(request);
+            await _recipientService.UpdateRecipient(id, serviceModel, cancellationToken);
 
             return NoContent();
         }
@@ -61,12 +70,7 @@ namespace DistributionSystemApi.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteRecipient(Guid id, CancellationToken cancellationToken)
         {
-            var success = await _recipientService.DeleteRecipient(id, cancellationToken);
-
-            if (!success)
-            {
-                return NotFound();
-            }
+            await _recipientService.DeleteRecipient(id, cancellationToken);
 
             return NoContent();
         }

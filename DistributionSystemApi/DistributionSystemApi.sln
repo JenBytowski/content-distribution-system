@@ -7,11 +7,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DistributionSystemApi", "Di
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DistributionSystemApi.MailLibrary", "DistributionSystemApi.MailLibrary\DistributionSystemApi.MailLibrary.csproj", "{5978C486-5C4F-47F0-8078-40C0E161F4CA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DistributionSystemApi.Tests", "DistributionSystemApi.Tests\DistributionSystemApi.Tests.csproj", "{84ED9F0D-54E0-44AB-ACA0-23C58B9C0B78}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DistributionSystemApi.Tests", "DistributionSystemApi.Tests\DistributionSystemApi.Tests.csproj", "{84ED9F0D-54E0-44AB-ACA0-23C58B9C0B78}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DistributionSystemApi.Data", "DistributionSystemApi.DataAccess\DistributionSystemApi.Data.csproj", "{6B6CDDBD-5A86-4E29-92E6-83C4EF21DD93}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DistributionSystemApi.Data.Entities", "DistributionSystemApi.Services.Entities\DistributionSystemApi.Data.Entities.csproj", "{556E5AEC-20E3-4FCD-B31C-8BF6FD23F926}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DistributionSystemApi.Data.Entities", "DistributionSystemApi.Services.Entities\DistributionSystemApi.Data.Entities.csproj", "{556E5AEC-20E3-4FCD-B31C-8BF6FD23F926}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DistributionSystemApi.Services", "DistributionSystemApi.Services\DistributionSystemApi.Services.csproj", "{D304ADDC-68DE-4739-A46E-0577A0186883}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{556E5AEC-20E3-4FCD-B31C-8BF6FD23F926}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{556E5AEC-20E3-4FCD-B31C-8BF6FD23F926}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{556E5AEC-20E3-4FCD-B31C-8BF6FD23F926}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D304ADDC-68DE-4739-A46E-0577A0186883}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D304ADDC-68DE-4739-A46E-0577A0186883}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D304ADDC-68DE-4739-A46E-0577A0186883}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D304ADDC-68DE-4739-A46E-0577A0186883}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

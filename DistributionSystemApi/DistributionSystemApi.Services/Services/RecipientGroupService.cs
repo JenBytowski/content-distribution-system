@@ -1,12 +1,11 @@
 ﻿using DistributionSystemApi.Data.Entities;
-using DistributionSystemApi.Data;
 using Microsoft.EntityFrameworkCore;
-using DistributionSystemApi.Requests;
-using DistributionSystemApi.Responses;
 using DistributionSystemApi.Interfaces;
 using DistributionSystemApi.Data.Interfaces;
+using DistributionSystemApi.Services.Models;
+using DistributionSystemApi.DistributionSystemApi.Services.Models;
 
-namespace DistributionSystemApi.Services
+namespace DistributionSystemApi.DistributionSystemApi.Services.Services
 {
     public class RecipientGroupService : IRecipientGroupService
     {
@@ -17,15 +16,15 @@ namespace DistributionSystemApi.Services
             _context = context;
         }
 
-        public async Task<List<RecipientGroupResponse>> GetRecipientGroups(CancellationToken cancellationToken)
+        public async Task<List<GetRecipientGroup>> GetRecipientGroups(CancellationToken cancellationToken)
         {
             var recipientGroups = await _context.Get<RecipientGroup>()
                 .Include(g => g.Recipients)
-                .Select(g => new RecipientGroupResponse
+                .Select(g => new GetRecipientGroup
                 {
                     Id = g.Id,
                     Title = g.Title,
-                    Recipients = g.Recipients.Select(r => new RecipientRecipientGroupResponse
+                    Recipients = g.Recipients.Select(r => new RecipientRecipientGroupModel
                     {
                         RecipientId = r.RecipientId,
                         GroupId = r.GroupId
@@ -36,16 +35,16 @@ namespace DistributionSystemApi.Services
             return recipientGroups;
         }
 
-        public async Task<RecipientGroupResponse> GetRecipientGroup(Guid id, CancellationToken cancellationToken)
+        public async Task<GetRecipientGroup> GetRecipientGroup(Guid id, CancellationToken cancellationToken)
         {
             var recipientGroup = await _context.Get<RecipientGroup>()
                 .Include(g => g.Recipients)
                 .Where(g => g.Id == id)
-                .Select(g => new RecipientGroupResponse
+                .Select(g => new GetRecipientGroup
                 {
                     Id = g.Id,
                     Title = g.Title,
-                    Recipients = g.Recipients.Select(r => new RecipientRecipientGroupResponse
+                    Recipients = g.Recipients.Select(r => new RecipientRecipientGroupModel
                     {
                         RecipientId = r.RecipientId,
                         GroupId = r.GroupId
@@ -56,11 +55,16 @@ namespace DistributionSystemApi.Services
             return recipientGroup;
         }
 
-        public async Task<RecipientGroupResponse> CreateRecipientGroup(CreateRecipientGroupRequest request, CancellationToken cancellationToken)
+        public async Task<Guid> CreateRecipientGroup(CreateRecipientGroup request, CancellationToken cancellationToken)
         {
             if (request.Title == null)
             {
                 throw new ArgumentNullException("Title and Email cannot be null");
+            }
+
+            if (_context.Get<RecipientGroup>().Any(r => r.Title == request.Title))
+            {
+                throw new ArgumentException("Title must be unique");
             }
 
             var recipientGroup = new RecipientGroup
@@ -85,35 +89,24 @@ namespace DistributionSystemApi.Services
 
             await _context.SaveChangesAsync(cancellationToken);
 
-            var response = new RecipientGroupResponse
-            {
-                Id = recipientGroup.Id,
-                Title = recipientGroup.Title,
-                Recipients = recipientGroup.Recipients?.Select(r => new RecipientRecipientGroupResponse
-                {
-                    RecipientId = r.RecipientId,
-                    GroupId = r.GroupId
-                }).ToList()
-            };
-
-            return response;
+            return recipientGroup.Id;
         }
 
-        public async Task<bool> UpdateRecipientGroup(Guid id, CreateRecipientGroupRequest request, CancellationToken cancellationToken)
+        public async Task UpdateRecipientGroup(Guid id, CreateRecipientGroup request, CancellationToken cancellationToken)
         {
             if (request.Title == null)
             {
-                throw new ArgumentNullException("Title and Email cannot be null");
+                throw new ArgumentNullException("Title cannot be null");
+            }
+
+            if (_context.Get<RecipientGroup>().Any(r => r.Title == request.Title))
+            {
+                throw new ArgumentException("Title must be unique");
             }
 
             var recipientGroup = await _context.Get<RecipientGroup>()
                 .Include(g => g.Recipients)
                 .FirstOrDefaultAsync(g => g.Id == id, cancellationToken);
-
-            if (recipientGroup == null)
-            {
-                return false;
-            }
 
             recipientGroup.Title = request.Title;
 
@@ -141,25 +134,28 @@ namespace DistributionSystemApi.Services
                 _context.Create(recipientRecipientGroup);
             }
 
-            _context.Update(recipientGroup);
             await _context.SaveChangesAsync(cancellationToken);
-
-            return true;
         }
 
-        public async Task<bool> DeleteRecipientGroup(Guid id, CancellationToken cancellationToken)
+        public async Task DeleteRecipientGroup(Guid id, CancellationToken cancellationToken)
         {
-            var recipientGroup = await _context.Get<RecipientGroup>().SingleOrDefaultAsync(r => r.Id == id);
+            var recipientGroup = await _context.Get<RecipientGroup>().FirstOrDefaultAsync(r => r.Id == id);
 
-            if (recipientGroup == null)
+            if (recipientGroup != null)
             {
-                return false;
+                var groupRecipients = await _context.Get<RecipientRecipientGroup>()
+                    .Where(rrg => rrg.GroupId == id)
+                    .ToListAsync(cancellationToken);
+
+                foreach (var groupRecipient in groupRecipients)
+                {
+                    _context.Remove(groupRecipient);
+                }
+
+                _context.Remove(recipientGroup);
+
+                await _context.SaveChangesAsync(cancellationToken);
             }
-
-            _context.Remove(recipientGroup);
-            await _context.SaveChangesAsync(cancellationToken);
-
-            return true;
         }
     }
 }

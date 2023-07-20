@@ -1,13 +1,13 @@
 import React, { useEffect, useState, ChangeEvent } from "react";
 import Input from "../../UI/Inputs/Input";
-import { Modal, Form, FormGroup, Container, Row } from "react-bootstrap";
+import { Modal, Form, FormGroup, Container, Row, Toast } from "react-bootstrap";
 import { returnInputRecipientConfiguration } from "../../Utility/Recipient/InputRecipientConfiguration";
 import * as formUtilityActions from "../../Utility/Recipient/RecipientFormUtility";
 import { AxiosResponse } from "axios";
 import axios from "../../axios/axios";
 import "../Modal.scss";
-import Button from '@mui/material/Button';
-import Checkbox from '@mui/material/Checkbox';
+import Button from "@mui/material/Button";
+import Checkbox from "@mui/material/Checkbox";
 import { Group } from "../../components/Models/Group/Group";
 import { FormElement } from "../../components/Models/Form/FormElement";
 import { RecipientForm } from "../../components/Models/Form/RecipientForm";
@@ -32,6 +32,7 @@ const CreateRecipient: React.FC<CreateRecipientProps> = ({
   const [recipientForm, setRecipientForm] = useState<RecipientForm>({});
   const [groups, setGroups] = useState<Group[]>(availableGroups);
   const [selectedGroups, setSelectedGroups] = useState<Groups[]>([]);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const handleCreateRecipientCancel = () => {
     onHide();
@@ -65,7 +66,7 @@ const CreateRecipient: React.FC<CreateRecipientProps> = ({
       const isGroupSelected = prevSelectedGroups.some((group) => group.groupId === groupId);
       const updatedGroups = isGroupSelected
         ? prevSelectedGroups.filter((group) => group.groupId !== groupId)
-        : [...prevSelectedGroups, { recipientId: '', groupId }];
+        : [...prevSelectedGroups, { recipientId: "", groupId }];
       return updatedGroups;
     });
   };
@@ -75,23 +76,23 @@ const CreateRecipient: React.FC<CreateRecipientProps> = ({
     id: string
   ) => {
     const createdRecipientForm = { ...recipientForm };
-  
-    if (id === 'groups') {
+
+    if (id === "groups") {
       const selectElement = event.target as HTMLSelectElement;
       const selectedGroups = Array.from(selectElement.selectedOptions, (option) => option.value);
       createdRecipientForm[id].value = selectedGroups;
     } else {
       createdRecipientForm[id].value = event.target.value;
     }
-  
+
     createdRecipientForm[id] = formUtilityActions.executeValidationAndReturnFormElement(
       event,
       createdRecipientForm,
       id
     );
-  
+
     const counter = formUtilityActions.countInvalidElements(createdRecipientForm);
-  
+
     setFormElementsArray(
       formUtilityActions.convertStateToArrayOfFormObjects(createdRecipientForm)
     );
@@ -101,36 +102,41 @@ const CreateRecipient: React.FC<CreateRecipientProps> = ({
 
   const handleCreateRecipient = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-  
+
     const recipientToCreate = {
       title: recipientForm.title.value,
       email: recipientForm.email.value,
       telephoneNumber: recipientForm.telephoneNumber.value !== "" ? recipientForm.telephoneNumber.value : null,
       groups: selectedGroups.length > 0 ? selectedGroups.map(group => group.groupId) : []
     };
-  
+
     axios
       .post("/api/Recipient", recipientToCreate)
       .then((response: AxiosResponse<any>) => {
         console.log("Recipient successfully created", response.data);
-  
+
         const createdRecipient = {
           ...recipientToCreate,
           id: response.data.id,
         };
-  
+
         onRecipientCreated(createdRecipient, selectedGroups);
-  
+
         setRecipientForm(returnInputRecipientConfiguration());
         setFormElementsArray(
           formUtilityActions.convertStateToArrayOfFormObjects(returnInputRecipientConfiguration())
         );
         setFormValid(false);
-  
+
         handleCreateRecipientCancel();
       })
       .catch((error) => {
         console.error("Error creating recipient", error);
+        if (error.response && error.response.data && error.response.data.message) {
+          setErrorMessage(error.response); 
+        } else {
+          setErrorMessage("An error occurred while creating");
+        }
       });
   };
 
@@ -141,6 +147,12 @@ const CreateRecipient: React.FC<CreateRecipientProps> = ({
       </Modal.Header>
       <Modal.Body>
         <Container>
+          {errorMessage && (
+            <Toast onClose={() => setErrorMessage(null)} delay={5000} autohide>
+                <strong className="me-auto">Error</strong>
+              <Toast.Body>{errorMessage}</Toast.Body>
+            </Toast>
+          )}
           <Form onSubmit={handleCreateRecipient}>
             {formElementsArray.map((element) => (
               <Input
@@ -178,7 +190,7 @@ const CreateRecipient: React.FC<CreateRecipientProps> = ({
         </Container>
       </Modal.Body>
       <Modal.Footer>
-        <Container className = "groups-container">
+        <Container className="groups-container">
           <h5>Select Groups</h5>
           {groups.map((group: Group) => (
             <div key={group.id}>

@@ -1,7 +1,8 @@
-﻿using DistributionSystemApi.Data;
+﻿using DistributionSystemApi.AutoMapper;
+using DistributionSystemApi.Data;
 using DistributionSystemApi.Data.Interfaces;
+using DistributionSystemApi.DistributionSystemApi.Services.Services;
 using DistributionSystemApi.Interfaces;
-using DistributionSystemApi.Services;
 
 namespace DistributionSystemApi.ConfigurationExtensions
 {
@@ -12,6 +13,7 @@ namespace DistributionSystemApi.ConfigurationExtensions
             services.AddScoped<IDataContext, DataContext>();
             services.AddScoped<IRecipientService, RecipientService>();
             services.AddScoped<IRecipientGroupService, RecipientGroupService>();
+            services.AddAutoMapper(typeof(RecipientMappingProfile));
 
             return services;
         }

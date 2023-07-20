@@ -10,7 +10,7 @@ namespace DistributionSystemApi.Data.Entities
 
         public Recipient Recipient { get; set; }
 
-        public Guid GroupId { get; set; }
+        public Guid? GroupId { get; set; }
 
         public RecipientGroup Group { get; set; }
     }

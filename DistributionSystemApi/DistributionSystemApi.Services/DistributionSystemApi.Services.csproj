@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="12.0.1" />
+    <PackageReference Include="morelinq" Version="3.4.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DistributionSystemApi.DataAccess\DistributionSystemApi.Data.csproj" />
+    <ProjectReference Include="..\DistributionSystemApi.MailLibrary\DistributionSystemApi.MailLibrary.csproj" />
+    <ProjectReference Include="..\DistributionSystemApi.Services.Entities\DistributionSystemApi.Data.Entities.csproj" />
+  </ItemGroup>
+
+</Project>
