@@ -1,7 +1,7 @@
-﻿using DistributionSystemApi.Services.Models;
-
-namespace DistributionSystemApi.Interfaces
+﻿namespace DistributionSystemApi.Interfaces
 {
+    using global::DistributionSystemApi.Services.Models;
+
     public interface IRecipientGroupService
     {
         Task<List<GetRecipientGroup>> GetRecipientGroups(CancellationToken cancellationToken);

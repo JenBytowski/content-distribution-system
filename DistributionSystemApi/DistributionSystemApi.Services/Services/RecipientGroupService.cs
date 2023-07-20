@@ -99,7 +99,7 @@ namespace DistributionSystemApi.DistributionSystemApi.Services.Services
                 throw new ArgumentNullException("Title cannot be null");
             }
 
-            if (_context.Get<RecipientGroup>().Any(r => r.Title == request.Title))
+            if (_context.Get<RecipientGroup>().Any(r => r.Title == request.Title && r.Id != id))
             {
                 throw new ArgumentException("Title must be unique");
             }

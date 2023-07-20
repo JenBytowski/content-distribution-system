@@ -1,11 +1,9 @@
-﻿using System;
-
-namespace DistributionSystemApi.Data.Entities
+﻿namespace DistributionSystemApi.Data.Entities
 {
+    using System;
+
     public class RecipientRecipientGroup : BaseEntity
     {
-        public Guid Id { get; set; }
-
         public Guid RecipientId { get; set; }
 
         public Recipient Recipient { get; set; }

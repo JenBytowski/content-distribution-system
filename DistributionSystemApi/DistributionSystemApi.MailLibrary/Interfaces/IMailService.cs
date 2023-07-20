@@ -1,7 +1,7 @@
-﻿using DistributionSystemApi.MailLibrary.Models;
-
-namespace DistributionSystemApi.MailLibrary.Interfaces
+﻿namespace DistributionSystemApi.MailLibrary.Interfaces
 {
+    using DistributionSystemApi.MailLibrary.Models;
+
     public interface IMailService
     {
         Task SendEmailAsync(MailModel mail, CancellationToken cancellationToken);

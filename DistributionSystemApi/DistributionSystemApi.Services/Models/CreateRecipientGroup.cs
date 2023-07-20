@@ -1,12 +1,7 @@
-﻿using DistributionSystemApi.Data;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace DistributionSystemApi.Services.Models
+﻿namespace DistributionSystemApi.Services.Models
 {
+    using global::DistributionSystemApi.Data.Entities;
+
     public class CreateRecipientGroup : BaseEntity
     {
         public string Title { get; set; }

@@ -1,7 +1,7 @@
-﻿using DistributionSystemApi.Data;
-
-namespace DistributionSystemApi.DistributionSystemApi.Services.Models
+﻿namespace DistributionSystemApi.DistributionSystemApi.Services.Models
 {
+    using global::DistributionSystemApi.Data.Entities;
+
     public class CreateRecipient : BaseEntity
     {
         public string Title { get; set; }

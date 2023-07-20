@@ -204,12 +204,14 @@ export default function RecipientPage() {
         />
       )}
       
-      <CreateRecipient
-        show={showCreateModal}
+      {showCreateModal && (
+        <CreateRecipient
+        show={Boolean(showCreateModal)}
         onHide={handleCreateModalClose}
         onRecipientCreated={handleCreateModalSave}
         availableGroups={allGroups}
 />
+      )}
     </>
   );
 }

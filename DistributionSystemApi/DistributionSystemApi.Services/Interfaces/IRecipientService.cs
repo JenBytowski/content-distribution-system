@@ -1,7 +1,7 @@
-﻿using DistributionSystemApi.DistributionSystemApi.Services.Models;
-
-namespace DistributionSystemApi.Interfaces
+﻿namespace DistributionSystemApi.Interfaces
 {
+    using global::DistributionSystemApi.DistributionSystemApi.Services.Models;
+
     public interface IRecipientService
     {
         Task<PaginationPage<GetRecipient>> GetRecipients(uint page, uint pageSize, CancellationToken cancellationToken);

@@ -1,13 +1,12 @@
-﻿using DistributionSystemApi.Data.Entities;
-using Microsoft.EntityFrameworkCore;
-using DistributionSystemApi.Data.Interfaces;
-using DistributionSystemApi.Interfaces;
-using DistributionSystemApi.DistributionSystemApi.Services.Models;
-using AutoMapper;
-using System.Linq;
-
-namespace DistributionSystemApi.DistributionSystemApi.Services.Services
+﻿namespace DistributionSystemApi.DistributionSystemApi.Services.Services
 {
+    using Microsoft.EntityFrameworkCore;
+    using AutoMapper;
+    using global::DistributionSystemApi.Interfaces;
+    using global::DistributionSystemApi.Data.Interfaces;
+    using global::DistributionSystemApi.DistributionSystemApi.Services.Models;
+    using global::DistributionSystemApi.Data.Entities;
+
     public class RecipientService : IRecipientService
     {
         private readonly IDataContext _context;
@@ -141,12 +140,12 @@ namespace DistributionSystemApi.DistributionSystemApi.Services.Services
                 throw new ArgumentNullException("Email cannot be null");
             }
 
-            if (_context.Get<Recipient>().Any(r => r.Email == request.Email))
+            if (_context.Get<Recipient>().Any(r => r.Email == request.Email && r.Id != id))
             {
                 throw new ArgumentException("Email must be unique");
             }
 
-            if (_context.Get<Recipient>().Any(r => r.TelephoneNumber == request.TelephoneNumber))
+            if (_context.Get<Recipient>().Any(r => r.TelephoneNumber == request.TelephoneNumber && r.Id != id))
             {
                 throw new ArgumentException("Telephone number must be unique");
             }

@@ -1,11 +1,9 @@
-﻿using DistributionSystemApi.Data;
-
-namespace DistributionSystemApi.DistributionSystemApi.Services.Models
+﻿namespace DistributionSystemApi.DistributionSystemApi.Services.Models
 {
+    using global::DistributionSystemApi.Data.Entities;
+
     public class GetRecipient : BaseEntity
     {
-        public Guid Id { get; set; }
-
         public string Title { get; set; }
 
         public string Email { get; set; }
