@@ -2,9 +2,7 @@
 
 using System;
 
-public class NotificationTemplate
+public class NotificationTemplate : BaseEntity
 {
-    public Guid Id { get; set; }
-
     public string Description { get; set; }
 }
