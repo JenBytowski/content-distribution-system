@@ -30,10 +30,7 @@ export default function RecipientPage() {
   const [pageSize, setPageSize] = useState(10);
   const [totalCount, setTotalCount] = useState(0);
   const [groupNames, setGroupNames] = useState<string[]>([]);
-  useEffect(() => {
-    setGroupNames(data.map((recipient) => getGroupNamesByIds(recipient.groups, allGroups)));
-  }, [data, allGroups]);
-
+  
   const fetchData = async () => {
     try {
       const response = await axios.get(`/api/Recipient?page=${page}&pageSize=${pageSize}`);
@@ -120,7 +117,7 @@ export default function RecipientPage() {
   
     const groupNames = groups
       .map((group) => {
-        const foundGroup = allGroups.find((item) => item.id === group.groupId);
+        const foundGroup = allGroups?.find((item) => item.id === group.groupId);
         return foundGroup ? foundGroup.title : null;
       })
       .filter(Boolean);
@@ -142,12 +139,8 @@ export default function RecipientPage() {
               <TableCell align="center">Email</TableCell>
               <TableCell align="center">Telephone Number</TableCell>
               <TableCell align="center">Groups</TableCell>
-              <TableCell>
-                <EditIcon />
-              </TableCell>
-              <TableCell>
-                <DeleteIcon />
-              </TableCell>
+              <TableCell align="center">EditGroup</TableCell>
+              <TableCell align="center">DeleteGroup</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -156,13 +149,11 @@ export default function RecipientPage() {
                 <TableCell align="center">{recipient.title}</TableCell>
                 <TableCell align="center">{recipient.email}</TableCell>
                 <TableCell align="center">{recipient.telephoneNumber == null ? "-" : recipient.telephoneNumber}</TableCell>
-                <TableCell align="center">
-        {allGroups.length > 0 ? groupNames[index] : "No Group"}
-      </TableCell>
-                <TableCell>
+                <TableCell align="center">{allGroups.length > 0 ? groupNames[index] : "No Group"}</TableCell>
+                <TableCell  align="center">
                   <EditIcon aria-label="edit" onClick={() => handleEditModalOpen(recipient.id)} />
                 </TableCell>
-                <TableCell>
+                <TableCell  align="center">
                   <DeleteIcon aria-label="delete" onClick={() => handleDeleteModalOpen(recipient)} />
                 </TableCell>
               </TableRow>

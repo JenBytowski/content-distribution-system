@@ -3,10 +3,11 @@ import { RecipientForm } from "../../components/Models/Form/RecipientForm";
 export function convertStateToArrayOfFormObjects(formObject: RecipientForm) {
   const formElementsArray = [];
   for (let key in formObject) {
-    formElementsArray.push({
-      id: key,
-      config: formObject[key],
-    });
+    const formElement = { id: key, config: formObject[key] };
+    if (formObject[key].errorMessage) {
+      formElement.config.errorMessage = formObject[key].errorMessage;
+    }
+    formElementsArray.push(formElement);
   }
 
   return formElementsArray;
