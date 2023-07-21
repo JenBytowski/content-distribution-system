@@ -11,6 +11,11 @@
     .groups-container {
       display: flex;
       margin-top: 1rem;
+
+      .checkbox{
+         display: flex;
+         align-items: center;
+      }
     }
 
     h5{

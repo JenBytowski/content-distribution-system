@@ -13,6 +13,7 @@
         {
             CreateMap<GetRecipient, RecipientResponse>();
             CreateMap<CreateRecipient, CreateRecipientRequest>();
+            CreateMap<Guid, RecipientGroupResponse>();
             CreateMap<CreateRecipientRequest, CreateRecipient>();
             CreateMap<GetRecipientGroup, RecipientGroupResponse>();
             CreateMap<RecipientGroupResponse, GetRecipientGroup>();
@@ -20,7 +21,6 @@
             CreateMap<CreateRecipientGroupRequest, CreateRecipientGroup>();
             CreateMap<PaginationPage<GetRecipient>, PaginationPage<RecipientResponse>>();
             CreateMap<PaginationPage<RecipientResponse>, PaginationPage<GetRecipient>>();
-            CreateMap<PaginationPage<GetRecipient>, PaginationPage<RecipientResponse>>();
             CreateMap<CreateRecipientRequest, CreateRecipient>();
             CreateMap<RecipientRecipientGroupModel, RecipientRecipientGroupResponse>();
             CreateMap<GetRecipient, RecipientResponse>()
