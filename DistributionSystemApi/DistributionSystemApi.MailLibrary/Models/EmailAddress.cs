@@ -1,8 +1,8 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Net.Mail;
-
-namespace DistributionSystemApi.MailLibrary.Models
+﻿namespace DistributionSystemApi.MailLibrary.Models
 {
+    using System.ComponentModel.DataAnnotations;
+    using System.Net.Mail;
+
     public class EmailAddress
     {
         public string Address { get; set; }

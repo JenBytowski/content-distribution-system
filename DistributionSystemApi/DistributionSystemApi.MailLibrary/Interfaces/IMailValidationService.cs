@@ -1,12 +1,7 @@
-﻿using DistributionSystemApi.MailLibrary.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace DistributionSystemApi.MailLibrary.Interfaces
+﻿namespace DistributionSystemApi.MailLibrary.Interfaces
 {
+    using DistributionSystemApi.MailLibrary.Models;
+
     public interface IMailValidationService
     {
         void ValidateMail(MailModel mail);

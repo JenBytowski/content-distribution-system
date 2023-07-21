@@ -1,6 +1,9 @@
-﻿public class AttachmentData
+﻿namespace DistributionSystemApi.MailLibrary.Models
 {
-    public byte[] Data { get; set; }
+    public class AttachmentData
+    {
+        public byte[] Data { get; set; }
 
-    public string FileName { get; set; }
+        public string FileName { get; set; }
+    }
 }
