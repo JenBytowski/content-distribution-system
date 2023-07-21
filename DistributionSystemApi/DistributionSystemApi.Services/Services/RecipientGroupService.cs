@@ -67,6 +67,15 @@ namespace DistributionSystemApi.DistributionSystemApi.Services.Services
                 throw new ArgumentException("Title must be unique");
             }
 
+            if (request.RecipientIds != null && request.RecipientIds.Any())
+            {
+                bool allRecipientsExist = await AllRecipientsExistAsync(request.RecipientIds);
+                if (!allRecipientsExist)
+                {
+                    throw new ArgumentException("One or more selected recipients do not exist");
+                }
+            }
+
             var recipientGroup = new RecipientGroup
             {
                 Title = request.Title
@@ -102,6 +111,15 @@ namespace DistributionSystemApi.DistributionSystemApi.Services.Services
             if (_context.Get<RecipientGroup>().Any(r => r.Title == request.Title && r.Id != id))
             {
                 throw new ArgumentException("Title must be unique");
+            }
+
+            if (request.RecipientIds != null && request.RecipientIds.Any())
+            {
+                bool allRecipientsExist = await AllRecipientsExistAsync(request.RecipientIds);
+                if (!allRecipientsExist)
+                {
+                    throw new ArgumentException("One or more selected recipients do not exist");
+                }
             }
 
             var recipientGroup = await _context.Get<RecipientGroup>()
@@ -156,6 +174,11 @@ namespace DistributionSystemApi.DistributionSystemApi.Services.Services
 
                 await _context.SaveChangesAsync(cancellationToken);
             }
+        }
+
+        private async Task<bool> AllRecipientsExistAsync(IEnumerable<Guid> recipientIds)
+        {
+            return await _context.Get<Recipient>().AnyAsync(r => recipientIds.Contains(r.Id));
         }
     }
 }

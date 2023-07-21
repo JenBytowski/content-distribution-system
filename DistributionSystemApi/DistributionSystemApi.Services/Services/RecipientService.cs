@@ -6,6 +6,7 @@
     using global::DistributionSystemApi.Data.Interfaces;
     using global::DistributionSystemApi.DistributionSystemApi.Services.Models;
     using global::DistributionSystemApi.Data.Entities;
+    using System.Text.RegularExpressions;
 
     public class RecipientService : IRecipientService
     {
@@ -98,6 +99,15 @@
                 throw new ArgumentException("Telephone number must be unique");
             }
 
+            if (request.Groups != null && request.Groups.Any())
+            {
+                bool allGroupsExist = await AllGroupsExistAsync(request.Groups);
+                if (!allGroupsExist)
+                {
+                    throw new ArgumentException("One or more selected groups do not exist");
+                }
+            }
+
             var recipient = new Recipient
             {
                 Title = request.Title,
@@ -145,9 +155,18 @@
                 throw new ArgumentException("Email must be unique");
             }
 
-            if (_context.Get<Recipient>().Any(r => r.TelephoneNumber == request.TelephoneNumber && r.Id != id))
+            if (_context.Get<Recipient>().Any(r => r.TelephoneNumber == request.TelephoneNumber && r.Id != id && request.TelephoneNumber != null))
             {
                 throw new ArgumentException("Telephone number must be unique");
+            }
+
+            if (request.Groups != null && request.Groups.Any())
+            {
+                bool allGroupsExist = await AllGroupsExistAsync(request.Groups);
+                if (!allGroupsExist)
+                {
+                    throw new ArgumentException("One or more selected groups do not exist");
+                }
             }
 
             recipient.Title = request.Title;
@@ -206,6 +225,11 @@
                 _context.Remove(recipient);
                 await _context.SaveChangesAsync(cancellationToken);
             }
+        }
+
+        private async Task<bool> AllGroupsExistAsync(IEnumerable<Guid> groupIds)
+        {
+            return await _context.Get<RecipientGroup>().AnyAsync(g => groupIds.Contains(g.Id));
         }
     }
 }

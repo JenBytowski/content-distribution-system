@@ -102,38 +102,41 @@ const CreateRecipient: React.FC<CreateRecipientProps> = ({
 
   const handleCreateRecipient = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
+  
     const recipientToCreate = {
       title: recipientForm.title.value,
       email: recipientForm.email.value,
-      telephoneNumber: recipientForm.telephoneNumber.value !== "" ? recipientForm.telephoneNumber.value : null,
+      telephoneNumber:
+        recipientForm.telephoneNumber.value.trim() !== ""
+          ? recipientForm.telephoneNumber.value
+          : null,
       groups: selectedGroups.length > 0 ? selectedGroups.map(group => group.groupId) : []
     };
-
+  
     axios
       .post("/api/Recipient", recipientToCreate)
       .then((response: AxiosResponse<any>) => {
         console.log("Recipient successfully created", response.data);
-
+  
         const createdRecipient = {
           ...recipientToCreate,
           id: response.data.id,
         };
-
+  
         onRecipientCreated(createdRecipient, selectedGroups);
-
+  
         setRecipientForm(returnInputRecipientConfiguration());
         setFormElementsArray(
           formUtilityActions.convertStateToArrayOfFormObjects(returnInputRecipientConfiguration())
         );
         setFormValid(false);
-
+  
         handleCreateRecipientCancel();
       })
       .catch((error) => {
         console.error("Error creating recipient", error);
         if (error.response && error.response.data && error.response.data.message) {
-          setErrorMessage(error.response); 
+          setErrorMessage(error.response.data.message);
         } else {
           setErrorMessage("An error occurred while creating");
         }
