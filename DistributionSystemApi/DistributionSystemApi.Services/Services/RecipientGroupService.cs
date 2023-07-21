@@ -69,10 +69,13 @@ namespace DistributionSystemApi.DistributionSystemApi.Services.Services
 
             if (request.RecipientIds != null && request.RecipientIds.Any())
             {
-                bool allRecipientsExist = await AllRecipientsExistAsync(request.RecipientIds);
-                if (!allRecipientsExist)
+                var existingRecipients = _context.Get<Recipient>().Select(g => g.Id).ToList();
+                var validRecipients = request.RecipientIds.Where(groupId => existingRecipients.Contains(groupId));
+                var invalidRecipients = request.RecipientIds.Except(validRecipients).ToList();
+
+                if (invalidRecipients.Any())
                 {
-                    throw new ArgumentException("One or more selected recipients do not exist");
+                    throw new ArgumentException("One or more selected groups do not exist");
                 }
             }
 
@@ -115,10 +118,13 @@ namespace DistributionSystemApi.DistributionSystemApi.Services.Services
 
             if (request.RecipientIds != null && request.RecipientIds.Any())
             {
-                bool allRecipientsExist = await AllRecipientsExistAsync(request.RecipientIds);
-                if (!allRecipientsExist)
+                var existingRecipients = _context.Get<Recipient>().Select(g => g.Id).ToList();
+                var validRecipients = request.RecipientIds.Where(groupId => existingRecipients.Contains(groupId));
+                var invalidRecipients = request.RecipientIds.Except(validRecipients).ToList();
+
+                if (invalidRecipients.Any())
                 {
-                    throw new ArgumentException("One or more selected recipients do not exist");
+                    throw new ArgumentException("One or more selected groups do not exist");
                 }
             }
 
@@ -176,9 +182,9 @@ namespace DistributionSystemApi.DistributionSystemApi.Services.Services
             }
         }
 
-        private async Task<bool> AllRecipientsExistAsync(IEnumerable<Guid> recipientIds)
+        private Task<bool> AllRecipientsExistAsync(IEnumerable<Guid> recipientIds)
         {
-            return await _context.Get<Recipient>().AnyAsync(r => recipientIds.Contains(r.Id));
+            return _context.Get<Recipient>().AllAsync(r => recipientIds.Contains(r.Id));
         }
     }
 }
